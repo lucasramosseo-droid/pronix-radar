@@ -238,8 +238,23 @@
   .prod-card .thumb .sazonal {
     position: absolute; top: 10px; right: 10px; font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 999px;
     color: var(--texto); background: var(--amarelo); border: 1px solid rgba(0,0,0,.12);
+    display: inline-flex; align-items: center; gap: 5px;
   }
   [data-theme="dark"] .prod-card .thumb .sazonal { color: #1b1b1b; }
+  .saz-verao { background: linear-gradient(135deg, #ff3d2e, #ff7a00); color: #fff !important; border: 1px solid rgba(255,255,255,.35); animation: saz-calor 1.6s ease-in-out infinite; box-shadow: 0 0 12px rgba(255,60,0,.55); }
+  .saz-inverno { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff !important; border: 1px solid rgba(255,255,255,.4); animation: saz-gelo 2.4s ease-in-out infinite; }
+  .saz-inverno::after { content: '❄'; font-size: 9px; opacity: 0; }
+  .saz-blackfriday { background: linear-gradient(135deg, #000, #1a1a1a); color: var(--amarelo) !important; border: 1px solid var(--amarelo); animation: saz-blackfriday 1s ease-in-out infinite; box-shadow: 0 0 14px rgba(255,200,0,.65); }
+  .saz-diamae { background: linear-gradient(135deg, #ec4899, #d946ef); color: #fff !important; border: 1px solid rgba(255,255,255,.4); }
+  .saz-diapais { background: linear-gradient(135deg, #2563eb, #06b6d4); color: #fff !important; border: 1px solid rgba(255,255,255,.4); }
+  .saz-natal { background: linear-gradient(135deg, #dc2626, #16a34a); color: #fff !important; border: 1px solid rgba(255,255,255,.4); animation: saz-natal 2.2s ease-in-out infinite; }
+  .saz-voltaaulas { background: linear-gradient(135deg, #f97316, #facc15); color: #1b1b1b !important; border: 1px solid rgba(0,0,0,.15); }
+  .saz-copadomundo { background: linear-gradient(135deg, #16a34a, #facc15); color: #1b1b1b !important; border: 1px solid rgba(0,0,0,.15); animation: saz-copa 1.8s ease-in-out infinite; }
+  @keyframes saz-calor { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.08); filter: brightness(1.25); box-shadow: 0 0 18px rgba(255,60,0,.8); } }
+  @keyframes saz-gelo { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(2px); filter: brightness(1.2); } }
+  @keyframes saz-blackfriday { 0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255,200,0,.5); } 50% { transform: scale(1.1); box-shadow: 0 0 22px rgba(255,200,0,.95); } }
+  @keyframes saz-natal { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.35); } }
+  @keyframes saz-copa { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-3deg); } 75% { transform: rotate(3deg); } }
   .btn-foco {
     border: none; background: none; cursor: pointer; font-size: 16px; line-height: 1; padding: 0; margin-left: 4px; vertical-align: -1px;
   }
@@ -1123,7 +1138,7 @@ function renderHistorico() {
     const sinalDiff = diff > 0 ? '+' : '';
     const corDiff = diff > 0 ? 'var(--verde)' : diff < 0 ? 'var(--vermelho)' : 'var(--cinza)';
     return `
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid var(--borda);border-left:4px solid ${queda ? 'var(--vermelho)' : 'var(--amarelo)'};border-radius:10px;padding:10px 14px;margin-top:12px;font-size:13px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--superficie-2);border:1px solid var(--borda);border-left:4px solid ${queda ? 'var(--vermelho)' : 'var(--amarelo)'};border-radius:10px;padding:10px 14px;margin-top:12px;font-size:13px;">
         <div style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:16px;">${queda ? '🔻' : '⬆️'}</span>
           <div>
@@ -1290,18 +1305,22 @@ function scoreLabel(s) { return s >= 70 ? 'Alta oportunidade' : s >= 45 ? 'Médi
 
 /* ---- Margem, lucro e estoque ---- */
 const SAZONAL_TAGS = [
-  { v: 'verao',     r: '🔥', n: 'Alta de verão' },
-  { v: 'inverno',   r: '❄️', n: 'Alta de inverno' },
-  { v: 'diamae',    r: '💝', n: 'Dia das Mães' },
-  { v: 'diapais',   r: '👔', n: 'Dia dos Pais' },
-  { v: 'blackfriday', r: '🛍️', n: 'Black Friday' },
-  { v: 'natal',     r: '🎄', n: 'Natal' },
-  { v: 'voltaaulas', r: '🎒', n: 'Volta às aulas' },
-  { v: 'copadomundo', r: '⚽', n: 'Copa/eventos' }
+  { v: 'verao',     r: '🔥', n: 'Alta de verão',      c: 'saz-verao' },
+  { v: 'inverno',   r: '❄️', n: 'Alta de inverno',    c: 'saz-inverno' },
+  { v: 'diamae',    r: '💝', n: 'Dia das Mães',       c: 'saz-diamae' },
+  { v: 'diapais',   r: '👔', n: 'Dia dos Pais',       c: 'saz-diapais' },
+  { v: 'blackfriday', r: '🛍️', n: 'Black Friday',    c: 'saz-blackfriday' },
+  { v: 'natal',     r: '🎄', n: 'Natal',              c: 'saz-natal' },
+  { v: 'voltaaulas', r: '🎒', n: 'Volta às aulas',    c: 'saz-voltaaulas' },
+  { v: 'copadomundo', r: '⚽', n: 'Copa/eventos',     c: 'saz-copadomundo' }
 ];
 function sazonalLabel(v) {
   const t = SAZONAL_TAGS.find(x => x.v === v);
   return t ? `${t.r} ${t.n}` : '';
+}
+function sazonalCls(v) {
+  const t = SAZONAL_TAGS.find(x => x.v === v);
+  return t ? t.c : '';
 }
 function margemBruta(p) {
   const custo = p.custo || Math.round(p.preco * 0.68);
@@ -1332,12 +1351,13 @@ function cardProduto(p, compacto) {
   const lucro = lucroUnitario(p);
   const lucroMes = lucroMensal(p);
   const saz = sazonalLabel(p.sazonal);
+  const sazCls = sazonalCls(p.sazonal);
   return `
     <div class="prod-card${p.foco ? ' foco' : ''}" data-id="${p.id}">
       <div class="thumb">
         ${emojiProduto(p)}
         <span class="trend ${tendCls}">${tendenciaLabel(p.tendencia)}</span>
-        ${saz ? `<span class="sazonal">${saz}</span>` : ''}
+        ${saz ? `<span class="sazonal ${sazCls}">${saz}</span>` : ''}
       </div>
       <div class="body">
         <div class="nome"><a href="${esc(p.ml)}" target="_blank" rel="noopener" title="Abrir busca no ML">${esc(p.nome)}</a>
