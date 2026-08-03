@@ -357,9 +357,9 @@
   #reportePrint { display: none; }
   @media print {
     @page { margin: 14mm; }
-    body { background: #fff !important; }
+    body { background: var(--pdf-fundo, #fff) !important; }
     body > *:not(#reportePrint) { display: none !important; }
-    #reportePrint { display: block !important; }
+    #reportePrint { display: block !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
 </head>
@@ -396,6 +396,7 @@
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn btn-cinza btn-pequeno" id="btnRelCSV" title="Baixar planilha CSV dos produtos">⬇️ Baixar CSV</button>
+          <button class="btn btn-cinza btn-pequeno" id="btnPDFTema" title="Alternar tema do relatório em PDF">🌙 PDF escuro</button>
           <button class="btn btn-azul btn-pequeno" id="btnRelPDF" title="Gerar relatório em PDF para imprimir/salvar">🖨️ Gerar PDF</button>
         </div>
       </div>
@@ -883,8 +884,31 @@ function exportarCSV() {
   toast('Relatório CSV baixado.');
 }
 
+const PDF_TEMA_KEY = 'mlp_pdf_tema';
+function pdfTemaAtual() { return localStorage.getItem(PDF_TEMA_KEY) === 'escuro'; }
+function aplicarBtnPdfTema() {
+  const b = $('#btnPDFTema');
+  if (!b) return;
+  const escuro = pdfTemaAtual();
+  b.textContent = escuro ? '☀️ PDF claro' : '🌙 PDF escuro';
+  b.classList.toggle('on', escuro);
+}
+const PDF_CLARO = {
+  fundo: '#ffffff', texto: '#0a0a0c', suave: '#6e6e73', fraco: '#8a8a8f',
+  card: '#ffffff', borda: '#e7e2d9', linha: '#efeae2', linhaTodas: '#f5f1ea',
+  trilha: '#f0ece5', cab: '#f8f5ef', pagina: '#ffffff'
+};
+const PDF_ESCURO = {
+  fundo: '#141419', texto: '#f3efe9', suave: '#b8b4ad', fraco: '#8a8a8f',
+  card: '#1b1b22', borda: '#2e2e35', linha: '#2a2a31', linhaTodas: '#26262c',
+  trilha: '#2a2a31', cab: '#23232b', pagina: '#141419'
+};
+
 function gerarPDF() {
   const el = $('#reportePrint');
+  const escuro = pdfTemaAtual();
+  const T = escuro ? PDF_ESCURO : PDF_CLARO;
+  document.documentElement.style.setProperty('--pdf-fundo', T.pagina);
   const totalBuscas = dados.produtos.reduce((s, p) => s + p.buscas, 0);
   const data = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
   const emAlta = dados.produtos.filter(p => p.tendencia === 'alta').length;
@@ -898,23 +922,23 @@ function gerarPDF() {
   const todas = dados.produtos.slice().sort((a, b) => b.buscas - a.buscas);
 
   const kpi = (l, v, s, cor) => `
-    <div style="flex:1;min-width:170px;background:#fff;border:1px solid #e7e2d9;border-radius:10px;border-top:3px solid ${cor};padding:12px 14px;box-sizing:border-box;">
-      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;font-weight:700;">${l}</div>
+    <div style="flex:1;min-width:170px;background:${T.card};border:1px solid ${T.borda};border-radius:10px;border-top:3px solid ${cor};padding:12px 14px;box-sizing:border-box;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};font-weight:700;">${l}</div>
       <div style="font-size:22px;font-weight:800;margin-top:3px;">${v}</div>
-      <div style="font-size:11px;color:#8a8a8f;margin-top:2px;">${s}</div>
+      <div style="font-size:11px;color:${T.fraco};margin-top:2px;">${s}</div>
     </div>`;
   const linhaDept = (d, i) => {
     const cor = DEPT_CORES[i % DEPT_CORES.length];
     return `
     <tr>
-      <td style="padding:6px 10px;border-bottom:1px solid #efeae2;white-space:nowrap;font-weight:600;">${i + 1}. ${d.nome}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #efeae2;width:45%;">
-        <div style="background:#f0ece5;border-radius:6px;height:10px;overflow:hidden;">
+      <td style="padding:6px 10px;border-bottom:1px solid ${T.linha};white-space:nowrap;font-weight:600;">${i + 1}. ${d.nome}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid ${T.linha};width:45%;">
+        <div style="background:${T.trilha};border-radius:6px;height:10px;overflow:hidden;">
           <div style="background:${cor};height:10px;width:${d.pct}%;"></div>
         </div>
       </td>
-      <td style="padding:6px 10px;border-bottom:1px solid #efeae2;text-align:right;white-space:nowrap;">${fmt(d.valor)}</td>
-      <td style="padding:6px 10px;border-bottom:1px solid #efeae2;text-align:right;font-weight:800;white-space:nowrap;">${d.pct.toFixed(1).replace('.', ',')}%</td>
+      <td style="padding:6px 10px;border-bottom:1px solid ${T.linha};text-align:right;white-space:nowrap;">${fmt(d.valor)}</td>
+      <td style="padding:6px 10px;border-bottom:1px solid ${T.linha};text-align:right;font-weight:800;white-space:nowrap;">${d.pct.toFixed(1).replace('.', ',')}%</td>
     </tr>`;
   };
   const linhaProd = p => {
@@ -924,30 +948,30 @@ function gerarPDF() {
     const saz = sazonalLabel(p.sazonal);
     return `
     <tr>
-      <td style="padding:7px 10px;border-bottom:1px solid #efeae2;">
+      <td style="padding:7px 10px;border-bottom:1px solid ${T.linha};">
         <div style="font-weight:700;">${esc(p.nome)}</div>
-        <div style="font-size:10px;color:#8a8a8f;">${esc(nomeDept(p.dept))}${saz ? ' · ' + esc(saz) : ''}</div>
+        <div style="font-size:10px;color:${T.fraco};">${esc(nomeDept(p.dept))}${saz ? ' · ' + esc(saz) : ''}</div>
       </td>
-      <td style="padding:7px 10px;border-bottom:1px solid #efeae2;text-align:center;white-space:nowrap;">
+      <td style="padding:7px 10px;border-bottom:1px solid ${T.linha};text-align:center;white-space:nowrap;">
         <span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;color:#fff;background:${sCor};">${score}</span>
       </td>
-      <td style="padding:7px 10px;border-bottom:1px solid #efeae2;text-align:right;white-space:nowrap;">${moeda(p.preco)}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #efeae2;text-align:right;white-space:nowrap;">${fmt(p.buscas)}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #efeae2;text-align:center;white-space:nowrap;">${m.vendasDia}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #efeae2;text-align:right;white-space:nowrap;">${margemBruta(p)}%</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #efeae2;text-align:right;white-space:nowrap;font-weight:700;">${moeda(lucroMensal(p))}</td>
-      <td style="padding:7px 10px;border-bottom:1px solid #efeae2;text-align:center;white-space:nowrap;">${tendenciaLabel(p.tendencia)}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid ${T.linha};text-align:right;white-space:nowrap;">${moeda(p.preco)}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid ${T.linha};text-align:right;white-space:nowrap;">${fmt(p.buscas)}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid ${T.linha};text-align:center;white-space:nowrap;">${m.vendasDia}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid ${T.linha};text-align:right;white-space:nowrap;">${margemBruta(p)}%</td>
+      <td style="padding:7px 10px;border-bottom:1px solid ${T.linha};text-align:right;white-space:nowrap;font-weight:700;">${moeda(lucroMensal(p))}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid ${T.linha};text-align:center;white-space:nowrap;">${tendenciaLabel(p.tendencia)}</td>
     </tr>`;
   };
   const linhaTodas = p => `
     <tr>
-      <td style="padding:5px 8px;border-bottom:1px solid #f5f1ea;font-weight:600;">${esc(p.nome)}</td>
-      <td style="padding:5px 8px;border-bottom:1px solid #f5f1ea;font-size:10px;color:#8a8a8f;">${esc(nomeDept(p.dept))}</td>
-      <td style="padding:5px 8px;border-bottom:1px solid #f5f1ea;text-align:right;white-space:nowrap;">${moeda(p.preco)}</td>
-      <td style="padding:5px 8px;border-bottom:1px solid #f5f1ea;text-align:right;white-space:nowrap;">${fmt(p.buscas)}</td>
-      <td style="padding:5px 8px;border-bottom:1px solid #f5f1ea;text-align:center;white-space:nowrap;">${margemBruta(p)}%</td>
-      <td style="padding:5px 8px;border-bottom:1px solid #f5f1ea;text-align:right;white-space:nowrap;">${moeda(lucroMensal(p))}</td>
-      <td style="padding:5px 8px;border-bottom:1px solid #f5f1ea;text-align:center;white-space:nowrap;">${tendenciaLabel(p.tendencia)}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid ${T.linhaTodas};font-weight:600;">${esc(p.nome)}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid ${T.linhaTodas};font-size:10px;color:${T.fraco};">${esc(nomeDept(p.dept))}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid ${T.linhaTodas};text-align:right;white-space:nowrap;">${moeda(p.preco)}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid ${T.linhaTodas};text-align:right;white-space:nowrap;">${fmt(p.buscas)}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid ${T.linhaTodas};text-align:center;white-space:nowrap;">${margemBruta(p)}%</td>
+      <td style="padding:5px 8px;border-bottom:1px solid ${T.linhaTodas};text-align:right;white-space:nowrap;">${moeda(lucroMensal(p))}</td>
+      <td style="padding:5px 8px;border-bottom:1px solid ${T.linhaTodas};text-align:center;white-space:nowrap;">${tendenciaLabel(p.tendencia)}</td>
     </tr>`;
 
   const vendasTotais = todas.reduce((s, p) => s + converterVendas(p), 0);
@@ -955,17 +979,17 @@ function gerarPDF() {
   const emQueda = todas.filter(p => p.tendencia === 'queda').length;
 
   el.innerHTML = `
-    <div style="font-family:'Inter',Arial,sans-serif;color:#0a0a0c;max-width:820px;margin:0 auto;">
+    <div style="font-family:'Inter',Arial,sans-serif;color:${T.texto};max-width:820px;margin:0 auto;">
       <div style="border-bottom:3px solid #ffc800;padding-bottom:14px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:12px;">
           <img src="https://pronixconsultoria.com.br/wp-content/uploads/2026/02/favicon-150x150.png" alt="Pronix" style="height:44px;width:auto;display:block;">
           <div>
             <div style="font-size:24px;font-weight:800;letter-spacing:-.5px;">PRONIX Radar</div>
-            <div style="font-size:12px;color:#6e6e73;">Pronix · Vendas Online na Prática</div>
+            <div style="font-size:12px;color:${T.suave};">Pronix · Vendas Online na Prática</div>
           </div>
         </div>
         <div style="text-align:right;">
-          <div style="font-size:11px;color:#8a8a8f;text-transform:uppercase;letter-spacing:.6px;font-weight:700;">Relatório gerado</div>
+          <div style="font-size:11px;color:${T.fraco};text-transform:uppercase;letter-spacing:.6px;font-weight:700;">Relatório gerado</div>
           <div style="font-size:15px;font-weight:800;">${data}</div>
         </div>
       </div>
@@ -983,52 +1007,52 @@ function gerarPDF() {
       </div>
 
       <h3 style="font-size:15px;font-weight:800;margin:0 0 8px;">Participação por departamento</h3>
-      <div style="background:#fff;border:1px solid #e7e2d9;border-radius:10px;padding:6px 10px;margin-bottom:22px;">
+      <div style="background:${T.card};border:1px solid ${T.borda};border-radius:10px;padding:6px 10px;margin-bottom:22px;">
         <table style="width:100%;border-collapse:collapse;">
           <tr>
-            <th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Departamento</th>
-            <th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Distribuição</th>
-            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Buscas/mês</th>
-            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Participação</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Departamento</th>
+            <th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Distribuição</th>
+            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Buscas/mês</th>
+            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Participação</th>
           </tr>
           ${depts.map(linhaDept).join('')}
         </table>
       </div>
 
       <h3 style="font-size:15px;font-weight:800;margin:0 0 8px;">Top 10 oportunidades</h3>
-      <div style="background:#fff;border:1px solid #e7e2d9;border-radius:10px;padding:6px 10px;margin-bottom:22px;">
+      <div style="background:${T.card};border:1px solid ${T.borda};border-radius:10px;padding:6px 10px;margin-bottom:22px;">
         <table style="width:100%;border-collapse:collapse;">
-          <tr style="background:#f8f5ef;">
-            <th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Produto</th>
-            <th style="padding:8px 10px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Score</th>
-            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Preço</th>
-            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Buscas/mês</th>
-            <th style="padding:8px 10px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Vendas/dia</th>
-            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Margem</th>
-            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Lucro/mês</th>
-            <th style="padding:8px 10px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Tendência</th>
+          <tr style="background:${T.cab};">
+            <th style="padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Produto</th>
+            <th style="padding:8px 10px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Score</th>
+            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Preço</th>
+            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Buscas/mês</th>
+            <th style="padding:8px 10px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Vendas/dia</th>
+            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Margem</th>
+            <th style="padding:8px 10px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Lucro/mês</th>
+            <th style="padding:8px 10px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Tendência</th>
           </tr>
           ${top.map(linhaProd).join('')}
         </table>
       </div>
 
       <h3 style="font-size:15px;font-weight:800;margin:0 0 8px;">Catálogo completo (${todas.length})</h3>
-      <div style="background:#fff;border:1px solid #e7e2d9;border-radius:10px;padding:6px 10px;">
+      <div style="background:${T.card};border:1px solid ${T.borda};border-radius:10px;padding:6px 10px;">
         <table style="width:100%;border-collapse:collapse;">
-          <tr style="background:#f8f5ef;">
-            <th style="padding:8px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Produto</th>
-            <th style="padding:8px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Depto</th>
-            <th style="padding:8px 8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Preço</th>
-            <th style="padding:8px 8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Buscas/mês</th>
-            <th style="padding:8px 8px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Margem</th>
-            <th style="padding:8px 8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Lucro/mês</th>
-            <th style="padding:8px 8px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:#6e6e73;">Tendência</th>
+          <tr style="background:${T.cab};">
+            <th style="padding:8px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Produto</th>
+            <th style="padding:8px 8px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Depto</th>
+            <th style="padding:8px 8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Preço</th>
+            <th style="padding:8px 8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Buscas/mês</th>
+            <th style="padding:8px 8px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Margem</th>
+            <th style="padding:8px 8px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Lucro/mês</th>
+            <th style="padding:8px 8px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:${T.suave};">Tendência</th>
           </tr>
           ${todas.map(linhaTodas).join('')}
         </table>
       </div>
 
-      <div style="font-size:11px;color:#6e6e73;margin-top:18px;border-top:1px solid #e7e2d9;padding-top:10px;display:flex;justify-content:space-between;gap:20px;">
+      <div style="font-size:11px;color:${T.suave};margin-top:18px;border-top:1px solid ${T.borda};padding-top:10px;display:flex;justify-content:space-between;gap:20px;">
         <span>Dados estimados com base em tendências públicas de busca do Mercado Livre (tendencias.mercadolivre.com.br). Não há integração com ferramentas pagas.</span>
         <span style="white-space:nowrap;">PRONIX Radar · gerado em ${data}</span>
       </div>
@@ -1782,6 +1806,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('#btnRelCSV').onclick = exportarCSV;
   $('#btnRelPDF').onclick = gerarPDF;
+  $('#btnPDFTema').onclick = () => {
+    const escuro = !pdfTemaAtual();
+    try { localStorage.setItem(PDF_TEMA_KEY, escuro ? 'escuro' : 'claro'); } catch (e) {}
+    aplicarBtnPdfTema();
+    toast(escuro ? 'PDF escuro ativado.' : 'PDF claro ativado.');
+  };
+  aplicarBtnPdfTema();
   $('#brandLogo').onclick = () => { navegar('painel'); location.reload(); };
   $('#histProduto').addEventListener('change', renderHistorico);
   $('#histPeriodo').addEventListener('change', () => {
