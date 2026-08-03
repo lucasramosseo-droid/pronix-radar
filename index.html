@@ -832,9 +832,23 @@ async function mlBuscarReal(keyword, urlTrend) {
       if (!ri.ok) continue;
       const ij = await ri.json();
       const totalItens = (ij.paging && ij.paging.total) || 0;
-      const precos = (ij.results || []).map(x => x.price).filter(x => x > 0);
+      const itens = ij.results || [];
+      const precos = itens.map(x => x.price).filter(x => x > 0);
       if (!precos.length) continue;
       const dept = dominioDept(prod.domain_id || '');
+      let avaliacoes = 0;
+      let notaMedia = null;
+      const itemId = itens[0] && itens[0].id;
+      if (itemId) {
+        try {
+          const rr = await fetch(ML_CONFIG.apiUrl + '/reviews/item/' + itemId, { headers: h });
+          if (rr.ok) {
+            const rj = await rr.json();
+            avaliacoes = (rj.paging && rj.paging.total) || 0;
+            notaMedia = rj.rating_average || null;
+          }
+        } catch (e) { /* avaliações são opcionais */ }
+      }
       return {
         id: -(prod.id.match(/\d+/) ? parseInt(prod.id.match(/\d+/)[0], 10) : 1),
         nome: prod.name || keyword,
@@ -851,7 +865,9 @@ async function mlBuscarReal(keyword, urlTrend) {
         nota: '',
         foco: false,
         sazonal: null,
-        real: true
+        real: true,
+        avaliacoes,
+        notaMedia
       };
     } catch (e) { /* tenta o próximo candidato */ }
   }
@@ -959,7 +975,7 @@ function renderStats() {
   const precoMedio = dados.produtos.reduce((s, p) => s + p.preco, 0) / dados.produtos.length;
   const cards = [
     { l: 'Produtos monitorados', v: fmt(dados.produtos.length), s: 'em ' + dados.departamentos.length + ' departamentos', d: true },
-    { l: 'Buscas por mês', v: fmt(totalBuscas), s: 'volume total estimado', d: true },
+    { l: 'Buscas por mês', v: fmt(totalBuscas), s: 'volume estimado' + (dados.produtos.some(p => p.avaliacoes) ? ' · avaliações reais nos cards' : ''), d: true },
     { l: 'Em alta', v: fmt(emAlta), s: 'produtos em crescimento', d: false, c: 'var(--verde)' },
     { l: 'Preço médio', v: moeda(precoMedio), s: 'entre os monitorados', d: false }
   ];
@@ -1525,7 +1541,7 @@ function cardProduto(p, compacto, editavel) {
     <div class="prod-card${p.foco ? ' foco' : ''}" data-id="${p.id}">
       <div class="thumb">
         ${emojiProduto(p)}
-        <span class="trend ${tendCls}">${tendenciaLabel(p.tendencia)}</span>
+        <span class="trend ${tendCls}">${tendenciaLabel(p.tendencia)}${p.real ? ' (est.)' : ''}</span>
         ${saz ? `<span class="sazonal ${sazCls}">${saz}</span>` : ''}
       </div>
       <div class="body">
@@ -1535,9 +1551,14 @@ function cardProduto(p, compacto, editavel) {
         <div class="preco">${moeda(p.preco)} <small>preço médio</small></div>
         <div class="info-grid">
           <div class="info-item destaque">
-            <div class="l">Buscas/mês</div>
+            <div class="l">Buscas/mês${p.real ? ' · estimado' : ''}</div>
             <div class="v">${fmt(p.buscas)}</div>
           </div>
+          ${p.avaliacoes ? `
+          <div class="info-item">
+            <div class="l">Avaliações${p.notaMedia ? ' · nota ' + String(p.notaMedia).replace('.', ',') : ''}</div>
+            <div class="v" style="font-size:12px">${fmt(p.avaliacoes)} ⭐</div>
+          </div>` : ''}
           <div class="info-item">
             <div class="l">Departamento</div>
             <div class="v">${esc(dept)}</div>
@@ -1687,6 +1708,9 @@ function htmlMetricas(p) {
   const concLabel = { baixa: 'baixa', media: 'média', alta: 'alta' };
   const nota = p.tendencia === 'alta' && (conc === 'baixa' || conc === 'media') ? 'good'
              : p.tendencia === 'queda' || conc === 'alta' ? 'bad' : 'good';
+  const refAvaliacao = p.avaliacoes
+    ? ` O produto tem <b>${fmt(p.avaliacoes)} avaliações</b>${p.notaMedia ? ` com nota <b>${String(p.notaMedia).replace('.', ',')}</b>` : ''} no Mercado Livre, um indicador real de que já há demanda comprovada.`
+    : '';
   return `
     <div class="m-title">📊 Análise de demanda</div>
     <div class="m-grid">
@@ -1703,8 +1727,8 @@ function htmlMetricas(p) {
       <div class="m-item"><div class="l">Faturamento/mês</div><div class="v">${moeda(m.faturamento)}</div></div>
     </div>
     <div class="obs"><b>Análise:</b>       demanda ${p.tendencia === 'alta' ? 'em alta' : p.tendencia === 'queda' ? 'em queda' : 'estável'} e concorrência ${concLabel[conc]}. Volume de ${fmt(p.buscas)} buscas/mês sugere um mercado
-      ${nota === 'good' ? 'atrativo para novos vendedores, com boas oportunidades de posicionamento.' : 'mais disputado — avalie diferenciação no anúncio antes de investir em estoque.'}
-      Fonte de referência: ${esc(p.fonte)} (dados públicos estimados).</div>`;
+      ${nota === 'good' ? 'atrativo para novos vendedores, com boas oportunidades de posicionamento.' : 'mais disputado — avalie diferenciação no anúncio antes de investir em estoque.'}${refAvaliacao}
+      Fonte de referência: ${esc(p.fonte)} (dados públicos; buscas, tendência e concorrência são estimados).</div>`;
 }
 
 /* =========================================================
