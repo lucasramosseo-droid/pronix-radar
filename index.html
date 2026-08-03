@@ -1135,14 +1135,17 @@ function renderHistorico() {
     const data = dt.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
     const diaSemana = dt.toLocaleDateString('pt-BR', { weekday: 'long' });
     const anterior = i > 0 ? vals[i - 1] : null;
-    const queda = anterior !== null && v < anterior;
     const diff = anterior !== null ? ((v - anterior) / anterior) * 100 : 0;
-    const sinalDiff = diff > 0 ? '+' : '';
-    const corDiff = diff > 0 ? 'var(--verde)' : diff < 0 ? 'var(--vermelho)' : 'var(--cinza)';
+    const subiu = diff > 0;
+    const caiu = diff < 0;
+    const sinalDiff = subiu ? '+' : '';
+    const corDiff = subiu ? 'var(--verde)' : caiu ? 'var(--vermelho)' : 'var(--cinza)';
+    const barra = subiu ? 'var(--verde)' : caiu ? 'var(--vermelho)' : 'var(--amarelo)';
+    const seta = subiu ? '▲' : caiu ? '▼' : '●';
     return `
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--superficie-2);border:1px solid var(--borda);border-left:4px solid ${queda ? 'var(--vermelho)' : 'var(--amarelo)'};border-radius:10px;padding:10px 14px;margin-top:12px;font-size:13px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--superficie-2);border:1px solid var(--borda);border-left:4px solid ${barra};border-radius:10px;padding:10px 14px;margin-top:12px;font-size:13px;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-size:16px;">${queda ? '🔻' : '⬆️'}</span>
+          <span style="font-size:15px;color:${corDiff};">${seta}</span>
           <div>
             <div style="font-weight:800;color:var(--texto);text-transform:capitalize;">${diaSemana}, ${data}</div>
             <div style="color:var(--cinza);font-size:12px;">${fmt(v)} buscas no dia · dia ${i + 1} de ${vals.length}</div>
