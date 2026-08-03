@@ -30,7 +30,7 @@ Todo o dado exibido parte das **tendências públicas do Mercado Livre** (tenden
 ## 4. Impacto e colaboradores beneficiados
 
 - **Abrangência**: começa de **uso individual** do colaborador, mas a solução é um arquivo único e portátil (HTML), podendo ser **replicada para todo o setor** sem custo nem instalação.
-- **Colaboradores beneficiados**: estimativa de **1 a 6 colaboradores** de cadsa equipe de especialistas que participam da decisão de catálogo e compra de estoque, com potencial de escalar para o setor inteiro (envio do arquivo ou publicação em pasta compartilhada).
+- **Colaboradores beneficiados**: estimativa de **1 a 6 colaboradores** de cada equipe de especialistas que participam da decisão de catálogo e compra de estoque, com potencial de escalar para o setor inteiro (envio do arquivo ou publicação em pasta compartilhada).
 
 ## 5. Print de tela ou vídeo curto
 
