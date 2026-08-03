@@ -6,7 +6,7 @@ Ferramenta de uso interno da equipe Pronix para análise de demanda e oportunida
 
 ## 1. Descrição da tarefa/problema resolvido
 
-A equipe precisa decidir **quais produtos anunciar ou investir em estoque** no Mercado Livre, entendendo rapidamente o volume de buscas, a tendência e a concorrência de cada item. Antes, essa análise era manual e demorada: consultar tendências, comparar preços, estimar margem e "chutar" a viabilidade de cada produto, uma decisão baseada em intuição.
+A equipe precisa decidir **quais produtos anunciar ou investir em estoque** no Mercado Livre, entendendo rapidamente o volume de buscas, a tendência e a concorrência de cada item. Antes, essa análise era manual e demorada: consultar tendências, comparar preços, estimar margem e calcular a viabilidade de cada produto.
 
 O Pronix Radar centraliza isso em um painel único: monitora **36 produtos em 8 departamentos** (≈ 3,3 milhões de buscas/mês estimadas), calcula automaticamente para cada um o **score de oportunidade (0–100)**, a **margem**, o **lucro unitário**, o **lucro mensal estimado** e a **quantidade de estoque sugerida**, e reúne os melhores achados na aba **Oportunidades do dia**. Também gera **relatórios em PDF e CSV** para registro e compartilhamento.
 
@@ -30,7 +30,7 @@ Todo o dado exibido parte das **tendências públicas do Mercado Livre** (tenden
 ## 4. Impacto e colaboradores beneficiados
 
 - **Abrangência**: começa de **uso individual** do colaborador, mas a solução é um arquivo único e portátil (HTML), podendo ser **replicada para todo o setor** sem custo nem instalação.
-- **Colaboradores beneficiados**: estimativa de **1 a 5 colaboradores** da equipe de produtos/operação que participam da decisão de catálogo e compra de estoque, com potencial de escalar para o setor inteiro (envio do arquivo ou publicação em pasta compartilhada).
+- **Colaboradores beneficiados**: estimativa de **1 a 6 colaboradores** de cadsa equipe de especialistas que participam da decisão de catálogo e compra de estoque, com potencial de escalar para o setor inteiro (envio do arquivo ou publicação em pasta compartilhada).
 
 ## 5. Print de tela ou vídeo curto
 
