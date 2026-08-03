@@ -174,7 +174,10 @@
   .btn {
     display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer;
     font: inherit; font-weight: 700; border-radius: 12px; padding: 12px 18px; transition: all .2s;
+    outline: none;
   }
+  .btn:focus-visible { outline: 2px solid var(--amarelo); outline-offset: 2px; }
+  .btn:active { transform: translateY(0); }
   .btn-amarelo { background: linear-gradient(135deg, var(--amarelo), var(--amarelo-escuro)); color: #0a0a0c; box-shadow: 0 4px 12px rgba(255,200,0,.3); }
   .btn-amarelo:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(255,200,0,.45); }
   .btn-azul { background: #0a0a0c; color: #fff; }
@@ -395,7 +398,7 @@
           <p>Visão geral dos produtos mais procurados, com estimativas baseadas em tendências públicas de busca do Mercado Livre.</p>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <button class="btn btn-cinza btn-pequeno" id="btnRelCSV" title="Baixar planilha CSV dos produtos">⬇️ Baixar CSV</button>
+          <button class="btn btn-cinza btn-pequeno" id="btnRelCSV" title="Baixar planilha CSV dos produtos"><svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="#217346"/><path d="M6 6l8 8M14 6l-8 8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg> Baixar CSV</button>
           <button class="btn btn-cinza btn-pequeno" id="btnPDFTema" title="Alternar tema do relatório em PDF">🌙 PDF escuro</button>
           <button class="btn btn-azul btn-pequeno" id="btnRelPDF" title="Gerar relatório em PDF para imprimir/salvar">🖨️ Gerar PDF</button>
         </div>
