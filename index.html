@@ -1468,7 +1468,7 @@ function renderProdutos() {
     s === 'oportunidade' ? scoreOportunidade(b) - scoreOportunidade(a)
     : s === 'preco' ? b.preco - a.preco
     : b.buscas - a.buscas);
-  $('#prodGrid').innerHTML = lista.map(p => cardProduto(p, false, true)).join('');
+  $('#prodGrid').innerHTML = lista.map(p => cardProduto(p, false, p.fonte === 'Manual')).join('');
   $('#semResultados').style.display = lista.length ? 'none' : 'block';
   anexarEventosCard('#prodGrid');
 }
