@@ -391,7 +391,7 @@
     <button data-view="oportunidades">🎯 Oportunidades do dia</button>
   </nav>
   <div style="display:flex;align-items:center;gap:8px;">
-    <button class="ml-btn" id="btnConectarML" title="Conectar conta Mercado Livre para carregar tendências e preços reais">🔗 Conectar ML</button>
+    <button class="ml-btn" id="btnConectarML" title="Autorizar o app no servidor para dados reais do Mercado Livre">🔗 Conectar ML</button>
     <button class="dark-toggle" id="darkToggle" title="Alternar modo escuro">🌙</button>
     <button class="dark-toggle" id="alertaToggle" title="Receber alerta quando um produto subir nas buscas">🔔</button>
   </div>
@@ -750,48 +750,31 @@ function salvarDados() { localStorage.setItem(LS_KEY, JSON.stringify(dados)); }
    MERCADO LIVRE — OAuth e dados reais (API pública)
    ========================================================= */
 const ML_CONFIG = {
-  clientId: '3926651658690238',
-  clientSecret: 'YSZtY0uDigdZKxCign5H6o9Qq45RpVrB',
-  redirectUri: 'https://lucasramosseo-droid.github.io/pronix-radar/',
-  authUrl: 'https://auth.mercadolivre.com.br/authorization?response_type=code&client_id=3926651658690238&redirect_uri=' + encodeURIComponent('https://lucasramosseo-droid.github.io/pronix-radar/'),
-  tokenUrl: 'https://api.mercadolibre.com/oauth/token',
-  apiUrl: 'https://api.mercadolibre.com'
+  proxyUrl: 'https://pronixconsultoria.com.br/ml-bridge.php',
+  apiKey: 'mLPronix2026R3aD4r',
+  authUrl: 'https://pronixconsultoria.com.br/ml-bridge.php?action=auth'
 };
-const ML_TOKEN_KEY = 'mlp_token';
 const ML_QTD_REAIS = 20;
 
-function mlToken() {
-  try { return JSON.parse(localStorage.getItem(ML_TOKEN_KEY) || 'null'); } catch (e) { return null; }
-}
-function mlSalvarToken(t) { localStorage.setItem(ML_TOKEN_KEY, JSON.stringify(t)); }
-function mlDesconectar() { localStorage.removeItem(ML_TOKEN_KEY); atualizarBtnML(); }
-function mlConectado() {
-  const t = mlToken();
-  return !!(t && t.access_token && t.expiraEm && Date.now() < t.expiraEm);
-}
-function mlHeaders() {
-  const t = mlToken();
-  return t && t.access_token ? { 'Authorization': 'Bearer ' + t.access_token } : {};
-}
-async function mlTrocarCode(code) {
-  const body = new URLSearchParams();
-  body.set('grant_type', 'authorization_code');
-  body.set('client_id', ML_CONFIG.clientId);
-  body.set('client_secret', ML_CONFIG.clientSecret);
-  body.set('code', code);
-  body.set('redirect_uri', ML_CONFIG.redirectUri);
-  const r = await fetch(ML_CONFIG.tokenUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: body.toString()
-  });
+let mlStatus = { ok: false, checado: false };
+
+async function proxy(action, params) {
+  const qs = new URLSearchParams(Object.assign({ action: action, key: ML_CONFIG.apiKey }, params || {}));
+  const r = await fetch(ML_CONFIG.proxyUrl + '?' + qs.toString());
+  const txt = await r.text();
   if (!r.ok) {
-    const txt = await r.text();
-    throw new Error('Falha na autorização (' + r.status + '): ' + txt.slice(0, 180));
+    throw new Error(action + ' ' + r.status + (txt ? ': ' + txt.slice(0, 160) : ''));
   }
-  const j = await r.json();
-  mlSalvarToken({ access_token: j.access_token, expires_in: j.expires_in || 21600, expiraEm: Date.now() + (j.expires_in || 21600) * 1000 });
-  return j;
+  try { return JSON.parse(txt); } catch (e) { return null; }
+}
+function mlConectado() { return mlStatus.ok; }
+function mlDesconectar() { mlStatus = { ok: false, checado: false }; atualizarBtnML(); }
+async function mlChecarStatus() {
+  try {
+    const j = await proxy('status');
+    mlStatus = { ok: !!(j && j.configured), checado: true };
+  } catch (e) { mlStatus = { ok: false, checado: true }; }
+  atualizarBtnML();
 }
 function atualizarBtnML() {
   const b = $('#btnConectarML');
@@ -799,7 +782,7 @@ function atualizarBtnML() {
   const ok = mlConectado();
   b.textContent = ok ? '🔗 ML conectado' : '🔗 Conectar ML';
   b.classList.toggle('on', ok);
-  b.title = ok ? 'Mercado Livre conectado. Clique para reconectar.' : 'Conectar conta Mercado Livre para carregar tendências e preços reais';
+  b.title = ok ? 'Dados reais do Mercado Livre ativos via servidor.' : 'Autorizar o app no servidor para carregar dados reais';
 }
 
 /* ---- Busca de dados reais na API ---- */
@@ -818,19 +801,12 @@ function dominioDept(domainId) {
 const ML_EMOJI = { 'eletronicos': '📱', 'casa-cozinha': '🍳', 'moda': '👟', 'beleza': '💄', 'esportes': '🚴', 'informatica': '💻', 'brinquedos': '🧸', 'automotivo': '🚗' };
 
 async function mlBuscarReal(keyword, urlTrend) {
-  const h = mlHeaders();
-  const searchUrl = ML_CONFIG.apiUrl + '/products/search?site_id=MLB&status=active&limit=6&q=' + encodeURIComponent(keyword);
-  const rs = await fetch(searchUrl, { headers: h });
-  if (!rs.ok) throw new Error('busca ' + rs.status);
-  const sj = await rs.json();
-  const cands = sj.results || [];
+  const sj = await proxy('search', { q: keyword });
+  const cands = (sj && sj.results) || [];
   if (!cands.length) return null;
   for (const prod of cands) {
     try {
-      const itemsUrl = ML_CONFIG.apiUrl + '/products/' + prod.id + '/items?limit=5';
-      const ri = await fetch(itemsUrl, { headers: h });
-      if (!ri.ok) continue;
-      const ij = await ri.json();
+      const ij = await proxy('items', { id: prod.id });
       const totalItens = (ij.paging && ij.paging.total) || 0;
       const itens = ij.results || [];
       const precos = itens.map(x => x.price).filter(x => x > 0);
@@ -841,12 +817,9 @@ async function mlBuscarReal(keyword, urlTrend) {
       const itemId = itens[0] && itens[0].id;
       if (itemId) {
         try {
-          const rr = await fetch(ML_CONFIG.apiUrl + '/reviews/item/' + itemId, { headers: h });
-          if (rr.ok) {
-            const rj = await rr.json();
-            avaliacoes = (rj.paging && rj.paging.total) || 0;
-            notaMedia = rj.rating_average || null;
-          }
+          const rj = await proxy('reviews', { id: itemId });
+          avaliacoes = (rj.paging && rj.paging.total) || 0;
+          notaMedia = rj.rating_average || null;
         } catch (e) { /* avaliações são opcionais */ }
       }
       return {
@@ -875,10 +848,8 @@ async function mlBuscarReal(keyword, urlTrend) {
 }
 
 async function mlCarregarReais() {
-  const r = await fetch(ML_CONFIG.apiUrl + '/trends/MLB', { headers: mlHeaders() });
-  if (!r.ok) throw new Error('tendências ' + r.status);
-  const trends = await r.json();
-  const lista = Array.isArray(trends) ? trends : [];
+  const j = await proxy('trends');
+  const lista = (j && Array.isArray(j)) ? j : [];
   const produtos = [];
   for (let i = 0; i < lista.length && produtos.length < ML_QTD_REAIS; i++) {
     const p = await mlBuscarReal(lista[i].keyword, lista[i].url).catch(() => null);
@@ -1887,31 +1858,35 @@ let timerAuto = null;
 async function atualizarMetricas() {
   const s = semente() + 1;
   sessionStorage.setItem(SS_SALT, String(s));
-  if (mlConectado()) {
-    try {
-      toast('Buscando tendências e preços reais no Mercado Livre...');
-      const reais = await mlCarregarReais();
-      if (reais.length) {
-        const manuais = dados.produtos.filter(p => p.manual === true);
-        dados.produtos = manuais.concat(reais);
-        aplicarImagensBase();
-        salvarDados();
-        renderTudo();
-        proximaAtualizacao = Date.now() + AUTO_INTERVALO_MS;
-        checarAlertas();
-        toast(reais.length + ' produtos carregados com dados reais do Mercado Livre.');
-        return;
-      }
-      toast('Não foi possível carregar tendências reais agora. Mantendo dados atuais.');
-    } catch (e) {
-      if (/401|403/.test(String(e.message))) { mlDesconectar(); toast('Sua conexão com o Mercado Livre expirou. Reconecte para dados reais.'); }
-      else toast('Falha ao buscar dados reais: ' + e.message);
+  try {
+    toast('Buscando tendências e preços reais no Mercado Livre...');
+    const reais = await mlCarregarReais();
+    if (reais.length) {
+      const manuais = dados.produtos.filter(p => p.manual === true);
+      dados.produtos = manuais.concat(reais);
+      aplicarImagensBase();
+      salvarDados();
+      renderTudo();
+      proximaAtualizacao = Date.now() + AUTO_INTERVALO_MS;
+      checarAlertas();
+      toast(reais.length + ' produtos carregados com dados reais do Mercado Livre.');
+      return;
+    }
+    toast('Não foi possível carregar tendências reais agora. Mantendo dados atuais.');
+  } catch (e) {
+    const msg = String(e.message || e);
+    if (/401|403/.test(msg)) {
+      mlDesconectar();
+      toast('O servidor não está autorizado no Mercado Livre. Abra a conexão do ML para autorizar uma única vez.');
+    } else if (/forbidden/.test(msg)) {
+      toast('Acesso ao serviço negado. Verifique se o ml-bridge.php está instalado e a chave correta.');
+    } else {
+      toast('Falha ao buscar dados reais: ' + msg);
     }
   }
   renderTudo();
   proximaAtualizacao = Date.now() + AUTO_INTERVALO_MS;
   checarAlertas();
-  toast('Métricas atualizadas com novos dados de tendência.');
 }
 
 function iniciarAutoAtualizacao() {
@@ -1974,24 +1949,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('#btnConectarML').onclick = () => {
     if (mlConectado()) {
-      if (confirm('Você já está conectado ao Mercado Livre. Desconectar?')) mlDesconectar();
+      if (confirm('O Mercado Livre já está autorizado no servidor. Reautorizar?')) {
+        window.open(ML_CONFIG.authUrl, '_blank');
+        mlChecarStatus();
+      }
       return;
     }
-    location.href = ML_CONFIG.authUrl;
+    window.open(ML_CONFIG.authUrl, '_blank');
+    mlChecarStatus();
   };
-  atualizarBtnML();
-
-  const params = new URLSearchParams(location.search);
-  const code = params.get('code');
-  if (code) {
-    mlTrocarCode(code).then(() => {
-      atualizarBtnML();
-      toast('Conta Mercado Livre conectada! Clique em "Atualizar métricas" para carregar dados reais.');
-      history.replaceState({}, document.title, location.pathname + location.hash);
-    }).catch(err => {
-      toast('Não foi possível conectar: ' + err.message);
-    });
-  }
+  mlChecarStatus();
 
   $('#brandLogo').onclick = () => { navegar('painel'); location.reload(); };
   $('#histProduto').addEventListener('change', renderHistorico);
