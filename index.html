@@ -1182,7 +1182,19 @@ function renderHistorico() {
   pontosSvg.forEach((c, i) => {
     c.style.cursor = 'pointer';
     c.addEventListener('click', () => {
+      el.querySelectorAll('.hist-linha-sel').forEach(x => x.remove());
       pontosSvg.forEach(x => { x.setAttribute('stroke', 'none'); x.setAttribute('stroke-width', '0'); });
+      const linha = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      linha.setAttribute('class', 'hist-linha-sel');
+      linha.setAttribute('x1', c.getAttribute('cx'));
+      linha.setAttribute('x2', c.getAttribute('cx'));
+      linha.setAttribute('y1', padX / 2);
+      linha.setAttribute('y2', H - padX / 2);
+      linha.setAttribute('stroke', 'var(--amarelo)');
+      linha.setAttribute('stroke-width', '2');
+      linha.setAttribute('stroke-dasharray', '5 4');
+      linha.setAttribute('stroke-opacity', '0.85');
+      el.querySelector('svg').insertBefore(linha, el.querySelector('svg .hist-area'));
       c.setAttribute('stroke', '#0a0a0c');
       c.setAttribute('stroke-width', '2');
       $('#histDetalhe').innerHTML = detalhe(parseInt(c.dataset.pt, 10));
