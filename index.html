@@ -1683,7 +1683,7 @@ function alternarAlertas() {
   if (alertasAtivos) {
     alertasAtivos = false;
     $('#alertaToggle').classList.remove('on');
-    $('#alertaToggle').textContent = '🔔 Alertas';
+    $('#alertaToggle').textContent = '🔔';
     toast('Alertas desativados.');
     return;
   }
@@ -1702,7 +1702,7 @@ function alternarAlertas() {
 function ativarAlertas() {
   alertasAtivos = true;
   $('#alertaToggle').classList.add('on');
-  $('#alertaToggle').textContent = '🔔 Ativo';
+  $('#alertaToggle').textContent = '🔔';
   checarAlertas();
   toast('Alertas ativados. Você será avisado quando um produto subir nas buscas.');
 }
