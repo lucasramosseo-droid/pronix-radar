@@ -399,7 +399,6 @@
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn btn-cinza btn-pequeno" id="btnRelCSV" title="Baixar planilha CSV dos produtos"><svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="#217346"/><path d="M6 6l8 8M14 6l-8 8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg> Baixar CSV</button>
-          <button class="btn btn-cinza btn-pequeno" id="btnPDFTema" title="Alternar tema do relatório em PDF">🌙 PDF escuro</button>
           <button class="btn btn-azul btn-pequeno" id="btnRelPDF" title="Gerar relatório em PDF para imprimir/salvar">🖨️ Gerar PDF</button>
         </div>
       </div>
@@ -887,30 +886,15 @@ function exportarCSV() {
   toast('Relatório CSV baixado.');
 }
 
-const PDF_TEMA_KEY = 'mlp_pdf_tema';
-function pdfTemaAtual() { return localStorage.getItem(PDF_TEMA_KEY) === 'escuro'; }
-function aplicarBtnPdfTema() {
-  const b = $('#btnPDFTema');
-  if (!b) return;
-  const escuro = pdfTemaAtual();
-  b.textContent = escuro ? '☀️ PDF claro' : '🌙 PDF escuro';
-  b.classList.toggle('on', escuro);
-}
 const PDF_CLARO = {
   fundo: '#ffffff', texto: '#0a0a0c', suave: '#6e6e73', fraco: '#8a8a8f',
   card: '#ffffff', borda: '#e7e2d9', linha: '#efeae2', linhaTodas: '#f5f1ea',
   trilha: '#f0ece5', cab: '#f8f5ef', pagina: '#ffffff'
 };
-const PDF_ESCURO = {
-  fundo: '#141419', texto: '#f3efe9', suave: '#b8b4ad', fraco: '#8a8a8f',
-  card: '#1b1b22', borda: '#2e2e35', linha: '#2a2a31', linhaTodas: '#26262c',
-  trilha: '#2a2a31', cab: '#23232b', pagina: '#141419'
-};
 
 function gerarPDF() {
   const el = $('#reportePrint');
-  const escuro = pdfTemaAtual();
-  const T = escuro ? PDF_ESCURO : PDF_CLARO;
+  const T = PDF_CLARO;
   document.documentElement.style.setProperty('--pdf-fundo', T.pagina);
   const totalBuscas = dados.produtos.reduce((s, p) => s + p.buscas, 0);
   const data = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
@@ -1809,13 +1793,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('#btnRelCSV').onclick = exportarCSV;
   $('#btnRelPDF').onclick = gerarPDF;
-  $('#btnPDFTema').onclick = () => {
-    const escuro = !pdfTemaAtual();
-    try { localStorage.setItem(PDF_TEMA_KEY, escuro ? 'escuro' : 'claro'); } catch (e) {}
-    aplicarBtnPdfTema();
-    toast(escuro ? 'PDF escuro ativado.' : 'PDF claro ativado.');
-  };
-  aplicarBtnPdfTema();
   $('#brandLogo').onclick = () => { navegar('painel'); location.reload(); };
   $('#histProduto').addEventListener('change', renderHistorico);
   $('#histPeriodo').addEventListener('change', () => {
