@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pronix Radar — Produtos mais buscados no Mercado Livre</title>
+<meta name="theme-color" content="#0a0a0c">
+<meta name="description" content="Pronix Radar — acompanhe os produtos mais buscados no Mercado Livre e identifique oportunidades de venda.">
+<link rel="icon" href="https://pronixconsultoria.com.br/wp-content/uploads/2026/02/favicon-150x150.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --azul: #0a0a0c;
+    --azul-escuro: #0a0a0c;
+    --azul-medio: #2b2b31;
+    --azul-claro: #f3efe9;
+    --amarelo: #ffc800;
+    --amarelo-escuro: #e0b000;
+    --fundo: #f7f5f0;
+    --texto: #0a0a0c;
+    --cinza: #6e6e73;
+    --verde: #16a34a;
+    --vermelho: #dc2626;
+    --borda: #e7e2d9;
+    --superficie: #ffffff;
+    --superficie-2: #f3efe9;
+    --superficie-destaque: #fff7e0;
+    --destaque-borda: #ffe9a8;
+    --destaque-texto: #7a5b00;
+    --thumb-grad: linear-gradient(135deg, var(--azul-claro), #fdf3d0);
+    color-scheme: light;
+  }
+  [data-theme="dark"] {
+    --azul-escuro: #1a1a1f;
+    --azul-medio: #9a9aa3;
+    --azul-claro: #1a1a1f;
+    --fundo: #0a0a0c;
+    --texto: #f3efe9;
+    --cinza: #a7a7af;
+    --borda: #2e2e35;
+    --superficie: #15151a;
+    --superficie-2: #1f1f26;
+    --superficie-destaque: #2e2a12;
+    --destaque-borda: #4a4015;
+    --destaque-texto: #ffe9a8;
+    --thumb-grad: linear-gradient(135deg, #1a1a1f, #24242b);
+    color-scheme: dark;
+  }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: var(--fundo); color: var(--texto); transition: background .25s ease, color .25s ease; }
+
+  /* ===== Header ===== */
+  .topbar {
+    background: linear-gradient(135deg, #0a0a0c 0%, #17171b 60%, #232329 100%);
+    color: #fff; padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; position: sticky; top: 0; z-index: 50;
+    box-shadow: 0 4px 20px rgba(10,10,12,.45);
+    border-bottom: 3px solid var(--amarelo);
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand .logo {
+    height: 40px; display: flex; align-items: center;
+  }
+  .brand .logo img { height: 40px; width: auto; display: block; }
+  .brand h1 { font-size: 20px; font-weight: 800; letter-spacing: -.5px; color: #f3efe9; }
+  .brand span { font-size: 12px; color: #c9c9cf; font-weight: 500; display: block; }
+  .nav { display: flex; gap: 6px; }
+  .nav button {
+    background: transparent; border: none; color: #e5e5e9; font: inherit; font-weight: 600;
+    padding: 10px 16px; border-radius: 10px; cursor: pointer; transition: all .2s;
+  }
+  .nav button:hover { background: rgba(255,200,0,.12); color: #fff; }
+  .nav button.active { background: var(--amarelo); color: #0a0a0c; box-shadow: 0 2px 10px rgba(255,200,0,.35); }
+  .admin-toggle {
+    background: rgba(255,255,255,.08); color: #e5e5e9; border: 1px solid rgba(255,255,255,.25);
+    padding: 8px 14px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
+  }
+  .admin-toggle:hover { background: rgba(255,200,0,.15); }
+  .admin-toggle.on { background: var(--amarelo); color: #0a0a0c; border-color: var(--amarelo); }
+  .dark-toggle {
+    background: rgba(255,255,255,.08); color: #e5e5e9; border: 1px solid rgba(255,255,255,.25);
+    padding: 8px 14px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
+  }
+  .dark-toggle:hover { background: rgba(255,200,0,.15); }
+  .dark-toggle.on { background: var(--amarelo); color: #0a0a0c; border-color: var(--amarelo); }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px 80px; }
+
+  /* ===== Seções ===== */
+  .view { display: none; }
+  .view.active { display: block; animation: fade .25s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: none; } }
+
+  .view-title { margin: 6px 0 20px; }
+  .view-title h2 { font-size: 26px; font-weight: 800; letter-spacing: -.5px; }
+  .view-title p { color: var(--cinza); font-size: 14px; margin-top: 4px; }
+
+  /* ===== Cards ===== */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 26px; }
+  .card {
+    background: var(--superficie); border: 1px solid var(--borda); border-radius: 16px; padding: 20px;
+    box-shadow: 0 1px 3px rgba(15,52,96,.06); transition: transform .2s, box-shadow .2s;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,52,96,.1); }
+  .card .label { font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: var(--cinza); font-weight: 700; }
+  .card .value { font-size: 26px; font-weight: 800; margin-top: 6px; letter-spacing: -.5px; }
+  .card .sub { font-size: 12px; color: var(--cinza); margin-top: 4px; }
+  .card .sub b { color: var(--azul-medio); }
+
+  /* ===== Tendências ===== */
+  .panel { background: var(--superficie); border: 1px solid var(--borda); border-radius: 16px; padding: 24px; margin-bottom: 26px; box-shadow: 0 1px 3px rgba(15,52,96,.06); }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .panel-head h3 { font-size: 18px; font-weight: 800; }
+  .trend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .trend-block { border: 1px solid var(--borda); border-radius: 14px; padding: 16px; background: var(--fundo); }
+  .trend-block .tag { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; font-size: 14px; padding: 5px 10px; border-radius: 999px; color: #fff; }
+  .tag.alta { background: var(--verde); }
+  .tag.estavel { background: #2563eb; }
+  .tag.queda { background: var(--vermelho); }
+  .trend-block ul { list-style: none; margin-top: 12px; }
+  .trend-block li { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--borda); font-size: 14px; }
+  .trend-block li:last-child { border-bottom: none; }
+  .trend-block li .rank { width: 22px; height: 22px; border-radius: 6px; background: var(--superficie); border: 1px solid var(--borda); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: var(--cinza); flex-shrink: 0; }
+  .trend-block li a { color: var(--texto); text-decoration: none; font-weight: 600; flex: 1; }
+  .trend-block li a:hover { color: var(--azul-medio); text-decoration: underline; }
+  .trend-block li .buscas { font-size: 12px; color: var(--cinza); font-weight: 600; white-space: nowrap; }
+
+  /* ===== Colapso da distribuição por tendência ===== */
+  .trend-block.recolhido ul { display: none; }
+  .trend-block.recolhido { padding-bottom: 12px; }
+  .trend-block .tag { cursor: pointer; user-select: none; transition: filter .15s; }
+  .trend-block .tag:hover { filter: brightness(1.12); }
+  .trend-block .tag .chev { margin-left: 8px; font-size: 11px; opacity: .9; }
+
+  /* ===== Gráfico de pizza (departamentos) ===== */
+  .pie-wrap { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+  .pie-chart { width: 220px; height: 220px; border-radius: 50%; position: relative; flex-shrink: 0; box-shadow: 0 4px 18px rgba(10,10,12,.12); }
+  .pie-hole {
+    position: absolute; inset: 17%; border-radius: 50%; background: var(--superficie);
+    display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center;
+  }
+  .pie-hole .v { font-size: 22px; font-weight: 800; }
+  .pie-hole .l { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--cinza); font-weight: 700; margin-top: 2px; }
+  .pie-legend { flex: 1; min-width: 240px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px 18px; }
+  .pie-legend-item { display: flex; align-items: center; gap: 9px; font-size: 13px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--borda); background: var(--superficie-2); }
+  .pie-legend-item .dot { width: 12px; height: 12px; border-radius: 4px; flex-shrink: 0; }
+  .pie-legend-item .nome { font-weight: 600; flex: 1; }
+  .pie-legend-item .pct { font-weight: 800; white-space: nowrap; }
+  .pie-legend-item .val { font-size: 11px; color: var(--cinza); white-space: nowrap; }
+  @media (max-width: 560px) { .pie-wrap { justify-content: center; } }
+
+  /* ===== Histórico de buscas ===== */
+  .hist-select {
+    font: inherit; font-size: 13px; font-weight: 600; padding: 8px 12px; border: 1px solid var(--borda);
+    border-radius: 10px; background: var(--superficie); color: var(--texto); max-width: 280px;
+  }
+  .hist-chart-wrap { width: 100%; overflow-x: auto; }
+  .hist-chart-wrap svg { width: 100%; min-width: 460px; height: auto; display: block; }
+  .hist-chart-wrap .hist-line { fill: none; stroke: var(--amarelo); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+  .hist-chart-wrap .hist-area { fill: rgba(255, 200, 0, .18); }
+  .hist-chart-wrap .hist-grid { stroke: var(--borda); stroke-width: 1; }
+  .hist-chart-wrap .hist-pt { fill: var(--amarelo-escuro); }
+  .hist-chart-wrap text { font-size: 11px; fill: var(--cinza); font-weight: 600; }
+
+  /* ===== Botões ===== */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer;
+    font: inherit; font-weight: 700; border-radius: 12px; padding: 12px 18px; transition: all .2s;
+  }
+  .btn-amarelo { background: linear-gradient(135deg, var(--amarelo), var(--amarelo-escuro)); color: #0a0a0c; box-shadow: 0 4px 12px rgba(255,200,0,.3); }
+  .btn-amarelo:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(255,200,0,.45); }
+  .btn-azul { background: #0a0a0c; color: #fff; }
+  .btn-azul:hover { background: #2b2b31; }
+  .btn-cinza { background: var(--superficie-2); color: var(--texto); }
+  .btn-cinza:hover { background: #e2dccf; }
+  .btn-verde { background: var(--verde); color: #fff; }
+  .btn-verde:hover { filter: brightness(1.08); }
+  .btn-perigo { background: #fee2e2; color: var(--vermelho); padding: 8px 12px; border-radius: 10px; font-size: 13px; }
+  .btn-perigo:hover { background: #fecaca; }
+  .btn-pequeno { padding: 8px 14px; font-size: 13px; border-radius: 10px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+  /* ===== Departamentos ===== */
+  .dept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+  .dept-card {
+    background: var(--superficie); border: 1px solid var(--borda); border-radius: 16px; overflow: hidden; cursor: pointer;
+    transition: transform .2s, box-shadow .2s; display: block; text-decoration: none; color: var(--texto);
+  }
+  .dept-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(10,10,12,.14); }
+  .dept-card .thumb { height: 150px; background: var(--thumb-grad); display: flex; align-items: center; justify-content: center; font-size: 64px; position: relative; overflow: hidden; }
+  .dept-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .dept-card .thumb::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,12,.5), transparent 55%); }
+  .dept-card .thumb .badge {
+    position: absolute; left: 14px; bottom: 12px; z-index: 2; width: 40px; height: 40px;
+    background: var(--amarelo); color: #0a0a0c; border-radius: 12px; font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,.25);
+  }
+  .dept-card .body { padding: 16px 18px; }
+  .dept-card h4 { font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .dept-card h4 .arrow { color: var(--amarelo-escuro); font-size: 18px; transition: transform .2s; }
+  .dept-card:hover h4 .arrow { transform: translateX(3px); }
+  .dept-card .desc { font-size: 13px; color: var(--cinza); margin-top: 6px; line-height: 1.5; }
+  .dept-card .meta { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .chip { background: var(--azul-claro); color: var(--azul-medio); font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+
+  /* ===== Produtos ===== */
+  .filtros { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 20px; }
+  @media (max-width: 1100px) { .filtros { grid-template-columns: 1fr 1fr 1fr; } }
+  @media (max-width: 600px) { .filtros { grid-template-columns: 1fr; } }
+  .filtros input, .filtros select {
+    font: inherit; padding: 11px 14px; border: 1px solid var(--borda); border-radius: 12px; background: var(--superficie); color: var(--texto);
+  }
+  .filtros input:focus, .filtros select:focus { outline: 2px solid var(--amarelo); outline-offset: 0; }
+
+  .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+  .prod-card {
+    background: var(--superficie); border: 1px solid var(--borda); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;
+    box-shadow: 0 1px 3px rgba(15,52,96,.06); transition: transform .2s, box-shadow .2s;
+  }
+  .prod-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,52,96,.1); }
+  .prod-card .thumb { height: 150px; background: var(--thumb-grad); display: flex; align-items: center; justify-content: center; font-size: 56px; position: relative; }
+  .prod-card .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .prod-card .thumb .trend {
+    position: absolute; top: 10px; left: 10px; font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 999px; color: #fff;
+  }
+  .trend.alta { background: var(--verde); }
+  .trend.estavel { background: #2563eb; }
+  .trend.queda { background: var(--vermelho); }
+  .prod-card .thumb .sazonal {
+    position: absolute; top: 10px; right: 10px; font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 999px;
+    color: var(--texto); background: var(--amarelo); border: 1px solid rgba(0,0,0,.12);
+  }
+  [data-theme="dark"] .prod-card .thumb .sazonal { color: #1b1b1b; }
+  .btn-foco {
+    border: none; background: none; cursor: pointer; font-size: 16px; line-height: 1; padding: 0; margin-left: 4px; vertical-align: -1px;
+  }
+  .prod-card.foco { border-color: var(--azul-medio); box-shadow: 0 0 0 2px color-mix(in srgb, var(--azul-medio) 22%, transparent); }
+  .nota-card {
+    background: var(--superficie-destaque); border: 1px dashed var(--destaque-borda); border-radius: 10px; padding: 8px 10px;
+    font-size: 12px; color: var(--destaque-texto); display: flex; gap: 6px; align-items: flex-start;
+  }
+  .prod-card .body { padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .prod-card .nome { font-size: 15px; font-weight: 700; line-height: 1.35; min-height: 42px; }
+  .prod-card .nome a { color: var(--texto); text-decoration: none; }
+  .prod-card .nome a:hover { color: var(--azul-medio); }
+  .prod-card .preco { font-size: 22px; font-weight: 800; color: var(--azul-escuro); }
+  .prod-card .preco small { font-size: 12px; font-weight: 600; color: var(--cinza); }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .info-item { background: var(--fundo); border-radius: 10px; padding: 8px 10px; }
+  .info-item .l { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--cinza); font-weight: 700; }
+  .info-item .v { font-size: 13px; font-weight: 700; margin-top: 2px; }
+  .info-item .v small { font-weight: 600; color: var(--cinza); }
+  .info-item.destaque { background: var(--superficie-destaque); }
+  .prod-card .acoes { display: flex; gap: 8px; margin-top: auto; }
+  .prod-card .acoes .btn { flex: 1; justify-content: center; font-size: 13px; padding: 10px; }
+  .prod-card .acoes a.btn { text-decoration: none; }
+  .prod-card .acoes .admin-btn { flex: 0 0 auto; }
+  .prod-card .fonte { font-size: 11px; color: var(--cinza); margin-top: 2px; }
+  .prod-card .fonte b { color: var(--azul-medio); }
+
+  /* ===== Barra de oportunidade ===== */
+  .score-row { margin-top: 2px; }
+  .score-bar { height: 7px; border-radius: 999px; background: var(--superficie-2); overflow: hidden; border: 1px solid var(--borda); }
+  .score-fill { height: 100%; border-radius: 999px; transition: width .3s; }
+  .nota-rodape { font-size: 11px; color: var(--cinza); margin-top: 14px; line-height: 1.5; }
+
+  /* ===== Métricas Analisar ===== */
+  .metrics { border-top: 1px dashed var(--borda); margin-top: 4px; padding-top: 12px; animation: fade .25s ease; }
+  .metrics .m-title { font-size: 13px; font-weight: 800; color: var(--azul-medio); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .metrics .m-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; }
+  .metrics .m-item { background: var(--fundo); border: 1px solid var(--borda); border-radius: 10px; padding: 9px 10px; }
+  .metrics .m-item .l { font-size: 10px; text-transform: uppercase; letter-spacing: .4px; color: var(--cinza); font-weight: 700; }
+  .metrics .m-item .v { font-size: 14px; font-weight: 800; margin-top: 2px; }
+  .metrics .m-item .v.good { color: var(--verde); }
+  .metrics .m-item .v.bad { color: var(--vermelho); }
+  .metrics .obs { margin-top: 10px; font-size: 12px; color: var(--cinza); background: var(--superficie-destaque); border: 1px solid var(--destaque-borda); border-radius: 10px; padding: 10px 12px; line-height: 1.5; }
+  .metrics .obs b { color: var(--azul-escuro); }
+
+  /* ===== Modal ===== */
+  .modal-bg { position: fixed; inset: 0; background: rgba(10,37,64,.5); display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px; }
+  .modal-bg.open { display: flex; }
+  .modal { background: var(--superficie); border-radius: 18px; max-width: 560px; width: 100%; padding: 26px; max-height: 90vh; overflow: auto; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
+  .modal h3 { font-size: 20px; font-weight: 800; margin-bottom: 18px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-grid label { font-size: 12px; font-weight: 700; color: var(--cinza); display: block; margin-bottom: 5px; }
+  .form-grid .full { grid-column: 1 / -1; }
+  .form-grid input, .form-grid select, .form-grid textarea {
+    width: 100%; font: inherit; padding: 10px 12px; border: 1px solid var(--borda); border-radius: 10px; background: var(--superficie);
+  }
+  .form-grid textarea { resize: vertical; min-height: 60px; }
+  .modal-acoes { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+  .vazio { text-align: center; color: var(--cinza); padding: 60px 20px; font-size: 15px; }
+  .rodape { text-align: center; color: #c9c9cf; font-size: 12px; padding: 28px 20px; border-top: 3px solid var(--amarelo); margin-top: 40px; background: #0a0a0c; }
+  .rodape button { background: none; border: none; color: var(--amarelo); font: inherit; font-size: 12px; cursor: pointer; text-decoration: underline; }
+  .aviso-atual { background: var(--superficie-destaque); border: 1px solid var(--destaque-borda); color: var(--destaque-texto); font-size: 13px; border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; line-height: 1.5; }
+
+  /* ===== Pop-up de atualização automática ===== */
+  .auto-pill {
+    position: fixed; right: 24px; bottom: 24px; z-index: 90;
+    background: var(--azul-escuro); color: #fff; border-radius: 14px;
+    padding: 10px 14px; display: none; align-items: center; gap: 12px;
+    box-shadow: 0 8px 24px rgba(10,37,64,.35);
+    font-size: 13px; font-weight: 600; transition: background .3s;
+  }
+  .auto-pill.show { display: flex; animation: fade .2s ease; }
+  .auto-pill .ap-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--verde); flex-shrink: 0; animation: pulse 1.6s infinite; }
+  .auto-pill.warn { background: linear-gradient(135deg, var(--amarelo), var(--amarelo-escuro)); color: #0a0a0c; }
+  .auto-pill.warn .ap-dot { background: #0a0a0c; animation: none; }
+  .auto-pill.warn button { background: rgba(10,10,12,.14); color: #0a0a0c; }
+  .auto-pill button:hover { background: rgba(255,255,255,.3); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+  @media (max-width: 480px) { .auto-pill { right: 12px; left: 12px; bottom: 12px; justify-content: space-between; } }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--azul-escuro); color: #fff;
+    padding: 12px 22px; border-radius: 12px; font-weight: 600; font-size: 14px; z-index: 200; transition: transform .3s ease; opacity: 0;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ===== Modo escuro: ajustes finos ===== */
+  [data-theme="dark"] .trend-block { background: var(--superficie-2); }
+  [data-theme="dark"] .info-item, [data-theme="dark"] .metrics .m-item { background: var(--superficie-2); }
+  [data-theme="dark"] .btn-cinza:hover { background: #2b2b31; }
+  [data-theme="dark"] .btn-perigo { background: #3a1515; color: #fca5a5; }
+  [data-theme="dark"] .btn-perigo:hover { background: #4a1a1a; }
+  [data-theme="dark"] .auto-pill, [data-theme="dark"] .toast { background: #2b2b31; }
+  [data-theme="dark"] .prod-card .preco { color: var(--amarelo); }
+  [data-theme="dark"] .prod-card .preco small { color: var(--cinza); }
+  [data-theme="dark"] .metrics .obs b { color: #f3efe9; }
+
+  /* ===== Relatório para impressão (PDF) ===== */
+  #reportePrint { display: none; }
+  @media print {
+    @page { margin: 14mm; }
+    body { background: #fff !important; }
+    body > *:not(#reportePrint) { display: none !important; }
+    #reportePrint { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo"><img src="https://pronixconsultoria.com.br/wp-content/uploads/2026/02/texto_branco_sem_tag-1-300x73.png" alt="Pronix - Vendas Online na Prática"></div>
+    <div>
+      <h1>Pronix Radar</h1>
+      <span>Radar de produtos mais buscados no Mercado Livre</span>
+    </div>
+  </div>
+  <nav class="nav">
+    <button data-view="painel" class="active">Painel</button>
+    <button data-view="departamentos">Departamentos</button>
+    <button data-view="produtos">Produtos</button>
+    <button data-view="oportunidades">Oportunidades do dia</button>
+  </nav>
+  <button class="dark-toggle" id="darkToggle" title="Alternar modo escuro">🌙 Escuro</button>
+  <button class="dark-toggle" id="alertaToggle" title="Receber alerta quando um produto subir nas buscas">🔔 Alertas</button>
+  <button class="admin-toggle" id="adminToggle" title="Mostrar/ocultar botões de edição e exclusão">Modo edição</button>
+</header>
+
+<main class="container">
+
+  <!-- ============ PAINEL ============ -->
+  <section class="view active" id="view-painel">
+    <div class="view-title">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+        <div>
+          <h2>Painel de Tendências</h2>
+          <p>Visão geral dos produtos mais procurados, com estimativas baseadas em tendências públicas de busca do Mercado Livre.</p>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-cinza btn-pequeno" id="btnRelCSV" title="Baixar planilha CSV dos produtos">⬇️ Baixar CSV</button>
+          <button class="btn btn-azul btn-pequeno" id="btnRelPDF" title="Gerar relatório em PDF para imprimir/salvar">🖨️ Gerar PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="aviso-atual">
+      Os dados abaixo são um retrato recente das tendências públicas de busca. Clique em <b>"Atualizar métricas"</b> para gerar uma nova análise das tendências. As métricas de IA de cada produto aparecem apenas quando você clica em <b>"Analisar com IA"</b> e se fecham ao atualizar a página.
+    </div>
+
+    <div class="cards" id="statCards"></div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Participação por departamento</h3>
+      </div>
+      <div id="deptPie"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Evolução de buscas — últimos 30 dias</h3>
+        <select class="hist-select" id="histProduto" title="Escolha o produto"></select>
+      </div>
+      <div id="histChart"></div>
+    </div>
+
+    <div class="panel" id="trendPanel">
+      <div class="panel-head">
+        <h3>Distribuição por tendência</h3>
+        <button class="btn btn-amarelo btn-pequeno" id="btnAtualizar">Atualizar métricas</button>
+      </div>
+      <div class="trend-grid" id="trendGrid"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Top produtos por volume de buscas</h3>
+        <p style="font-size:13px;color:var(--cinza);">Clique em um produto para ver os detalhes na aba Produtos.</p>
+      </div>
+      <div class="prod-grid" id="topProdutos"></div>
+    </div>
+  </section>
+
+  <!-- ============ DEPARTAMENTOS ============ -->
+  <section class="view" id="view-departamentos">
+    <div class="view-title">
+      <h2>Departamentos</h2>
+      <p>Clique em um departamento para abrir a busca direta no Mercado Livre.</p>
+    </div>
+    <div class="dept-grid" id="deptGrid"></div>
+  </section>
+
+  <!-- ============ PRODUTOS ============ -->
+  <section class="view" id="view-produtos">
+    <div class="view-title">
+      <h2>Catálogo de produtos</h2>
+      <p>Filtre por nome, departamento, tendência ou concorrência e abra o link direto da busca no Mercado Livre.</p>
+    </div>
+    <div class="filtros">
+      <input type="text" id="fBusca" placeholder="Buscar produto...">
+      <select id="fDept"><option value="">Todos os departamentos</option></select>
+      <select id="fTrend"><option value="">Todas as tendências</option><option value="alta">Em alta</option><option value="estavel">Estável</option><option value="queda">Em queda</option></select>
+      <select id="fConc"><option value="">Toda concorrência</option><option value="baixa">Baixa</option><option value="media">Média</option><option value="alta">Alta</option></select>
+      <select id="fFoco"><option value="">Todos</option><option value="foco">⭐ Meus focos</option></select>
+      <select id="fSort"><option value="buscas">Ordenar: buscas</option><option value="oportunidade">Ordenar: oportunidade</option><option value="preco">Ordenar: preço</option></select>
+      <button class="btn btn-azul btn-pequeno" id="btnAdd" style="display:none;">+ Novo produto</button>
+    </div>
+    <div class="prod-grid" id="prodGrid"></div>
+    <div class="vazio" id="semResultados" style="display:none;">Nenhum produto encontrado com esses filtros.</div>
+    <p class="nota-rodape">* Lucro mensal e vendas são estimativas: buscas × taxa de conversão por concorrência. Margem usa o custo de aquisição informado (padrão ≈ 68% do preço quando não preenchido).</p>
+  </section>
+
+  <!-- ============ OPORTUNIDADES DO DIA ============ -->
+  <section class="view" id="view-oportunidades">
+    <div class="view-title">
+      <h2>Oportunidades do dia</h2>
+      <p>Produtos com melhor pontuação de oportunidade e margem saudável. O ranking é calculado com o lucro mensal estimado.</p>
+    </div>
+    <div class="cards" id="oppStats"></div>
+    <div class="panel">
+      <div class="panel-head">
+        <h3>Top oportunidades para investir</h3>
+        <button class="btn btn-amarelo btn-pequeno" id="btnAtualizarOpp">Atualizar análise</button>
+      </div>
+      <div class="prod-grid" id="oppGrid"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="rodape">
+  <b style="color:#f3efe9;">Pronix Radar</b> — ferramenta interna de Pronix · Vendas Online na Prática
+  <br>
+  Dados estimados com base em tendências públicas de busca do Mercado Livre (tendencias.mercadolivre.com.br). Não há integração com ferramentas pagas.
+  <br><br>
+  <button id="btnRestaurar">Restaurar dados originais</button>
+</footer>
+
+<!-- Relatório impresso (gerado via JS ao clicar em "Gerar PDF") -->
+<div id="reportePrint"></div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3 id="modalTitle">Produto</h3>
+    <div class="form-grid">
+      <label class="full">Nome do produto
+        <input type="text" id="fNome">
+      </label>
+      <label>Departamento
+        <select id="fDeptEdit"></select>
+      </label>
+      <label>Preço médio (R$)
+        <input type="number" id="fPreco">
+      </label>
+      <label>Custo de aquisição (R$)
+        <input type="number" id="fCusto">
+      </label>
+      <label>Buscas por mês
+        <input type="number" id="fBuscas">
+      </label>
+      <label>Tendência
+        <select id="fTrendEdit">
+          <option value="alta">Em alta</option>
+          <option value="estavel">Estável</option>
+          <option value="queda">Em queda</option>
+        </select>
+      </label>
+      <label>Concorrência
+        <select id="fConcEdit">
+          <option value="baixa">Baixa</option>
+          <option value="media">Média</option>
+          <option value="alta">Alta</option>
+        </select>
+      </label>
+      <label>Emoji (se a foto falhar)
+        <input type="text" id="fEmoji">
+      </label>
+      <label>Sazonalidade
+        <select id="fSazonal">
+          <option value="">Nenhuma</option>
+          <option value="verao">🔥 Alta de verão</option>
+          <option value="inverno">❄️ Alta de inverno</option>
+          <option value="diamae">💝 Dia das Mães</option>
+          <option value="diapais">👔 Dia dos Pais</option>
+          <option value="blackfriday">🛍️ Black Friday</option>
+          <option value="natal">🎄 Natal</option>
+          <option value="voltaaulas">🎒 Volta às aulas</option>
+          <option value="copadomundo">⚽ Copa/eventos</option>
+        </select>
+      </label>
+      <label class="full">Link da imagem (URL da foto)
+        <input type="text" id="fImg">
+      </label>
+      <label class="full">Link de busca no ML
+        <input type="text" id="fMl">
+      </label>
+      <label class="full">Fonte
+        <select id="fFonte">
+          <option value="ML Tendências">ML Tendências</option>
+          <option value="Manual">Manual</option>
+        </select>
+      </label>
+    </div>
+    <div class="modal-acoes">
+      <button class="btn btn-cinza btn-pequeno" id="btnCancelar">Cancelar</button>
+      <button class="btn btn-verde btn-pequeno" id="btnSalvar">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="auto-pill" id="autoPill">
+  <span class="ap-dot"></span>
+  <span id="apTexto">Atualizando em 10s...</span>
+  <button id="apAgora">Atualizar agora</button>
+</div>
+
+<script>
+/* =========================================================
+   DADOS — tendências públicas de busca no Mercado Livre
+   (estimativas com base em tendências públicas de busca do Mercado Livre)
+   ========================================================= */
+
+const DEPARTAMENTOS_BASE = [
+  { id: 'eletronicos',     nome: 'Eletrônicos',      emoji: '📱', link: 'https://www.mercadolivre.com.br/c/eletronicos-audio-e-video', desc: 'Celulares, TVs, fones, som e smartwatchs com alta demanda.', img: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Headphones_on_white_background.jpg' },
+  { id: 'casa-cozinha',    nome: 'Casa e Cozinha',   emoji: '🍳', link: 'https://www.mercadolivre.com.br/c/casa-moveis-e-decoracao', desc: 'Air fryer, eletroportáteis, gadgets e itens de inverno.', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Airfryer.jpg/500px-Airfryer.jpg' },
+  { id: 'moda',            nome: 'Moda e Acessórios',emoji: '👟', link: 'https://www.mercadolivre.com.br/c/calcados-roupas-e-bolsas', desc: 'Tênis, roupas de inverno, bolsas e calçados.', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/On_Cloud_Running_Shoes.jpg/500px-On_Cloud_Running_Shoes.jpg' },
+  { id: 'beleza',          nome: 'Beleza e Cuidado', emoji: '💄', link: 'https://www.mercadolivre.com.br/c/beleza-e-cuidado-pessoal', desc: 'Perfumes, skincare, secadores e itens de autocuidado.', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/JAMES_REID_MINT_PERFUME_HOLIDAYS_2015_%2841081128222%29.jpg/500px-JAMES_REID_MINT_PERFUME_HOLIDAYS_2015_%2841081128222%29.jpg' },
+  { id: 'esportes',        nome: 'Esportes e Fitness', emoji: '🚴', link: 'https://www.mercadolivre.com.br/c/esportes-e-fitness', desc: 'Bicicletas, musculação, corrida e treino em casa.', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Colorful_pile_of_dumbbells_at_the_gym_2.jpg/500px-Colorful_pile_of_dumbbells_at_the_gym_2.jpg' },
+  { id: 'informatica',     nome: 'Informática',      emoji: '💻', link: 'https://www.mercadolivre.com.br/c/informatica', desc: 'Notebooks, monitores, periféricos e segurança.', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Notebook_computer.jpg/500px-Notebook_computer.jpg' },
+  { id: 'brinquedos',      nome: 'Brinquedos',       emoji: '🧸', link: 'https://www.mercadolivre.com.br/c/brinquedos-e-hobbies', desc: 'Carrinhos, bonecas, montáveis e eletrônicos infantis.', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/RC_Car_remote_control.jpg/500px-RC_Car_remote_control.jpg' },
+  { id: 'automotivo',      nome: 'Automotivo',       emoji: '🚗', link: 'https://www.mercadolivre.com.br/c/acessorios-para-veiculos', desc: 'Lubrificantes, câmeras de ré e acessórios para carros.', img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/LUBTROL_JSE_EDGE_5W-40_Motor_Oil_4L_Bottle.jpg/500px-LUBTROL_JSE_EDGE_5W-40_Motor_Oil_4L_Bottle.jpg' }
+];
+
+const PRODUTOS_BASE = [
+  { id: 1,  nome: 'Air Fryer 4-5L',              dept: 'casa-cozinha', preco: 329,  buscas: 190000, tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências', emoji: '🍟', ml: 'https://lista.mercadolivre.com.br/air-fryer-4-5-litros' },
+  { id: 2,  nome: 'Perfume Masculino',           dept: 'beleza',       preco: 219,  buscas: 175000, tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências',      emoji: '🧴', ml: 'https://lista.mercadolivre.com.br/perfume-masculino' },
+  { id: 3,  nome: 'Perfume Feminino',            dept: 'beleza',       preco: 189,  buscas: 165000, tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências',      emoji: '🌸', ml: 'https://lista.mercadolivre.com.br/perfume-feminino' },
+  { id: 4,  nome: 'Fone de Ouvido Bluetooth',    dept: 'eletronicos',  preco: 149,  buscas: 210000, tendencia: 'alta',    concorrencia: 'baixa', fonte: 'ML Tendências',     emoji: '🎧', ml: 'https://lista.mercadolivre.com.br/fone-bluetooth-sem-fio' },
+  { id: 5,  nome: 'Tênis de Corrida',            dept: 'moda',         preco: 249,  buscas: 150000, tendencia: 'alta',    concorrencia: 'alta',  fonte: 'ML Tendências', emoji: '🏃', ml: 'https://lista.mercadolivre.com.br/tenis-de-corrida' },
+  { id: 6,  nome: 'iPhone 13 128GB',             dept: 'eletronicos',  preco: 2999, buscas: 145000, tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências',     emoji: '📱', ml: 'https://lista.mercadolivre.com.br/iphone-13-128gb' },
+  { id: 7,  nome: 'Tênis Feminino Casual',       dept: 'moda',         preco: 189,  buscas: 138000, tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências',      emoji: '👠', ml: 'https://lista.mercadolivre.com.br/tenis-feminino' },
+  { id: 8,  nome: 'Smart TV 50" 4K',             dept: 'eletronicos',  preco: 2199, buscas: 128000, tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências', emoji: '📺', ml: 'https://lista.mercadolivre.com.br/smart-tv-50-4k' },
+  { id: 9,  nome: 'Smartwatch',                  dept: 'eletronicos',  preco: 299,  buscas: 110000, tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências',     emoji: '⌚', ml: 'https://lista.mercadolivre.com.br/smartwatch' },
+  { id: 10, nome: 'Ventilador Turbo',            dept: 'casa-cozinha', preco: 139,  buscas: 106000, tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências', emoji: '🌀', ml: 'https://lista.mercadolivre.com.br/ventilador-turbo' },
+  { id: 11, nome: 'Notebook Intel Core i5',      dept: 'informatica',  preco: 2799, buscas: 98000,  tendencia: 'estavel',  concorrencia: 'alta',  fonte: 'ML Tendências',     emoji: '💻', ml: 'https://lista.mercadolivre.com.br/notebook-core-i5' },
+  { id: 12, nome: 'Caixa de Som Bluetooth',      dept: 'eletronicos',  preco: 179,  buscas: 95000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências',      emoji: '🔊', ml: 'https://lista.mercadolivre.com.br/caixa-de-som-bluetooth' },
+  { id: 13, nome: 'Kit Skincare Facial',         dept: 'beleza',       preco: 119,  buscas: 92000,  tendencia: 'alta',    concorrencia: 'baixa', fonte: 'ML Tendências',      emoji: '✨', ml: 'https://lista.mercadolivre.com.br/kit-skincare-facial' },
+  { id: 14, nome: 'Casaco e Jaqueta de Inverno', dept: 'moda',         preco: 199,  buscas: 89000,  tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências', emoji: '🧥', ml: 'https://lista.mercadolivre.com.br/casaco-jaqueta-inverno' },
+  { id: 15, nome: 'Carregador Turbo 30W',        dept: 'eletronicos',  preco: 79,   buscas: 88000,  tendencia: 'estavel',  concorrencia: 'baixa', fonte: 'ML Tendências',     emoji: '🔌', ml: 'https://lista.mercadolivre.com.br/carregador-turbo-30w' },
+  { id: 16, nome: 'Chocolates e Cestas Gourmet', dept: 'casa-cozinha', preco: 89,   buscas: 83000,  tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências',      emoji: '🍫', ml: 'https://lista.mercadolivre.com.br/cesta-gourmet-chocolates' },
+  { id: 17, nome: 'Óleo de Motor 5W30',          dept: 'automotivo',   preco: 129,  buscas: 82000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências',     emoji: '🛢️', ml: 'https://lista.mercadolivre.com.br/oleo-motor-5w30' },
+  { id: 18, nome: 'Monitor 24" Full HD',         dept: 'informatica',  preco: 799,  buscas: 72000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências', emoji: '🖥️', ml: 'https://lista.mercadolivre.com.br/monitor-24-full-hd' },
+  { id: 19, nome: 'Aspirador de Pó Robô',        dept: 'casa-cozinha', preco: 899,  buscas: 74000,  tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências',     emoji: '🤖', ml: 'https://lista.mercadolivre.com.br/aspirador-robo' },
+  { id: 20, nome: 'Bicicleta Aro 29',            dept: 'esportes',     preco: 1899, buscas: 71000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências',      emoji: '🚲', ml: 'https://lista.mercadolivre.com.br/bicicleta-aro-29' },
+  { id: 21, nome: 'Liquidificador 1000W',        dept: 'casa-cozinha', preco: 199,  buscas: 68000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências', emoji: '🥤', ml: 'https://lista.mercadolivre.com.br/liquidificador-1000w' },
+  { id: 22, nome: 'Máquina de Café Expresso',    dept: 'casa-cozinha', preco: 649,  buscas: 66000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências',     emoji: '☕', ml: 'https://lista.mercadolivre.com.br/maquina-cafe-expresso' },
+  { id: 23, nome: 'Teclado Mecânico',            dept: 'informatica',  preco: 249,  buscas: 61000,  tendencia: 'alta',    concorrencia: 'baixa', fonte: 'ML Tendências',      emoji: '⌨️', ml: 'https://lista.mercadolivre.com.br/teclado-mecanico' },
+  { id: 24, nome: 'Secador de Cabelo Profissional', dept: 'beleza',    preco: 179,  buscas: 61000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências', emoji: '💨', ml: 'https://lista.mercadolivre.com.br/secador-de-cabelo-profissional' },
+  { id: 25, nome: 'Aquecedor Portátil',          dept: 'casa-cozinha', preco: 219,  buscas: 58000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências',     emoji: '🔥', ml: 'https://lista.mercadolivre.com.br/aquecedor-portatil' },
+  { id: 26, nome: 'Carrinho de Controle Remoto', dept: 'brinquedos',   preco: 159,  buscas: 56000,  tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências',      emoji: '🏎️', ml: 'https://lista.mercadolivre.com.br/carrinho-controle-remoto' },
+  { id: 27, nome: 'Câmera de Segurança Wi-Fi',   dept: 'informatica',  preco: 159,  buscas: 54000,  tendencia: 'alta',    concorrencia: 'media', fonte: 'ML Tendências', emoji: '📷', ml: 'https://lista.mercadolivre.com.br/camera-seguranca-wifi' },
+  { id: 28, nome: 'Kit Fondue',                  dept: 'casa-cozinha', preco: 159,  buscas: 39000,  tendencia: 'estavel',  concorrencia: 'baixa', fonte: 'ML Tendências',      emoji: '🧀', ml: 'https://lista.mercadolivre.com.br/kit-fondue' },
+  { id: 29, nome: 'Câmera de Ré',                dept: 'automotivo',   preco: 149,  buscas: 44000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências',     emoji: '🚙', ml: 'https://lista.mercadolivre.com.br/camera-de-re' },
+  { id: 30, nome: 'Jogo de Halteres',            dept: 'esportes',     preco: 299,  buscas: 42000,  tendencia: 'estavel',  concorrencia: 'baixa', fonte: 'ML Tendências', emoji: '🏋️', ml: 'https://lista.mercadolivre.com.br/jogo-de-halteres' },
+  { id: 31, nome: 'Boneca',                      dept: 'brinquedos',   preco: 99,   buscas: 48000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências',      emoji: '🎀', ml: 'https://lista.mercadolivre.com.br/boneca' },
+  { id: 32, nome: 'Blocos de Montar',            dept: 'brinquedos',   preco: 199,  buscas: 45000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências',     emoji: '🧱', ml: 'https://lista.mercadolivre.com.br/blocos-de-montar' },
+  { id: 33, nome: 'Roteador Wi-Fi 6',            dept: 'informatica',  preco: 199,  buscas: 47000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências', emoji: '📶', ml: 'https://lista.mercadolivre.com.br/roteador-wifi-6' },
+  { id: 34, nome: 'Legging Fitness',             dept: 'moda',         preco: 79,   buscas: 96000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências',      emoji: '🩳', ml: 'https://lista.mercadolivre.com.br/legging-fitness' },
+  { id: 35, nome: 'Bolsa Feminina',              dept: 'moda',         preco: 149,  buscas: 78000,  tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências',     emoji: '👜', ml: 'https://lista.mercadolivre.com.br/bolsa-feminina' },
+  { id: 36, nome: 'Celular Xiaomi Redmi Note',   dept: 'eletronicos',  preco: 1599, buscas: 132000, tendencia: 'estavel',  concorrencia: 'media', fonte: 'ML Tendências', emoji: '📲', ml: 'https://lista.mercadolivre.com.br/celular-xiaomi-redmi-note' }
+];
+
+/* Fotos reais (Wikimedia Commons) por produto — se uma foto falhar, cai no emoji */
+const IMGS_BASE = {
+  1: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Airfryer.jpg/500px-Airfryer.jpg',
+  2: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/JAMES_REID_MINT_PERFUME_HOLIDAYS_2015_%2841081128222%29.jpg/500px-JAMES_REID_MINT_PERFUME_HOLIDAYS_2015_%2841081128222%29.jpg',
+  3: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Falcon_pink_by_Tamura_Perfumes.jpg/500px-Falcon_pink_by_Tamura_Perfumes.jpg',
+  4: 'https://upload.wikimedia.org/wikipedia/commons/6/63/Headphones_on_white_background.jpg',
+  5: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/On_Cloud_Running_Shoes.jpg/500px-On_Cloud_Running_Shoes.jpg',
+  6: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/IPhone_Pro_%28Max%29.jpg/500px-IPhone_Pro_%28Max%29.jpg',
+  7: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Vans_sneakers_and_socks.jpg/500px-Vans_sneakers_and_socks.jpg',
+  8: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Smart_tv.jpg/500px-Smart_tv.jpg',
+  9: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Huawei_Smartwatch_Fit_2.jpg/500px-Huawei_Smartwatch_Fit_2.jpg',
+  10: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Electric_Fan_240x355.jpg/500px-Electric_Fan_240x355.jpg',
+  11: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Notebook_computer.jpg/500px-Notebook_computer.jpg',
+  12: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/JBL_GO2_Bluetooth_speaker_00_10_27_681000_%28turned_upright%29.jpeg/500px-JBL_GO2_Bluetooth_speaker_00_10_27_681000_%28turned_upright%29.jpeg',
+  13: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Eight_jars_of_body_cream_from_company_Rituals_on_sale_shelf_in_German_shop_%282023%29.jpg/500px-Eight_jars_of_body_cream_from_company_Rituals_on_sale_shelf_in_German_shop_%282023%29.jpg',
+  14: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Down_jackets_%2809-09-2022%29.jpg/500px-Down_jackets_%2809-09-2022%29.jpg',
+  15: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Orico_YC-PE0508000H_multiport_USB_charger-1.jpg/500px-Orico_YC-PE0508000H_multiport_USB_charger-1.jpg',
+  16: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Six_Tupla_Chocolate_Bars.jpg/500px-Six_Tupla_Chocolate_Bars.jpg',
+  17: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/LUBTROL_JSE_EDGE_5W-40_Motor_Oil_4L_Bottle.jpg/500px-LUBTROL_JSE_EDGE_5W-40_Motor_Oil_4L_Bottle.jpg',
+  18: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Monitor_CRT_e_monitor_LCD%2C_junho_de_2016.jpg/500px-Monitor_CRT_e_monitor_LCD%2C_junho_de_2016.jpg',
+  19: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Robotic_vacuum_cleaner_in_the_Church_of_the_Visitation_in_Trakai_02.jpg/500px-Robotic_vacuum_cleaner_in_the_Church_of_the_Visitation_in_Trakai_02.jpg',
+  20: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Mountain_bike_downhill_07.jpg/500px-Mountain_bike_downhill_07.jpg',
+  21: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/ElectricBlender.jpg/500px-ElectricBlender.jpg',
+  22: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Lelit_Semiautomatic_Espresso_Machine_with_PID_and_Pressure_Gauge.jpg/500px-Lelit_Semiautomatic_Espresso_Machine_with_PID_and_Pressure_Gauge.jpg',
+  23: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Mechanical_Keyboard.jpg/500px-Mechanical_Keyboard.jpg',
+  24: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Hair_dryer_in_a_bag_in_the_hotel_bathroom.jpg/500px-Hair_dryer_in_a_bag_in_the_hotel_bathroom.jpg',
+  25: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/White_electric_radiator.jpg/500px-White_electric_radiator.jpg',
+  26: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/RC_Car_remote_control.jpg/500px-RC_Car_remote_control.jpg',
+  27: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Security_camera%2C_September_2018.jpg/500px-Security_camera%2C_September_2018.jpg',
+  28: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Fondue2.jpg/500px-Fondue2.jpg',
+  29: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/TT_Reversing_Camera.jpg/500px-TT_Reversing_Camera.jpg',
+  30: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Colorful_pile_of_dumbbells_at_the_gym_2.jpg/500px-Colorful_pile_of_dumbbells_at_the_gym_2.jpg',
+  31: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Early_Barbie_dolls.jpg/500px-Early_Barbie_dolls.jpg',
+  32: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Building_blocks_design-4.jpg/500px-Building_blocks_design-4.jpg',
+  33: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/ELECOM_WRC-300FEBK_WPS_WiFi_router.jpg/500px-ELECOM_WRC-300FEBK_WPS_WiFi_router.jpg',
+  34: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Women_in_Sport_Bra_and_Leggings_5%2C_by_Andrea_Piacquadio.jpg/500px-Women_in_Sport_Bra_and_Leggings_5%2C_by_Andrea_Piacquadio.jpg',
+  35: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Handbag_at_Nordstrom_Rack_-_Santa_Rosa_-_December_2022_-_Sarah_Stierch.jpg/500px-Handbag_at_Nordstrom_Rack_-_Santa_Rosa_-_December_2022_-_Sarah_Stierch.jpg',
+  36: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Xiaomi_Redmi_Note_10_Pro.jpg/500px-Xiaomi_Redmi_Note_10_Pro.jpg'
+};
+
+/* =========================================================
+   ESTADO (persistência local para CRUD manual)
+   ========================================================= */
+const LS_KEY = 'mlpesquisas_dados_v1';
+let dados = null;
+let admin = false;
+let editandoId = null;
+
+function carregarDados() {
+  const salvo = localStorage.getItem(LS_KEY);
+  if (salvo) {
+    try {
+      dados = JSON.parse(salvo);
+      if (!dados.departamentos || !dados.produtos) throw new Error('formato');
+      aplicarImagensBase();
+      return;
+    } catch (e) {}
+  }
+  dados = {
+    departamentos: JSON.parse(JSON.stringify(DEPARTAMENTOS_BASE)),
+    produtos: JSON.parse(JSON.stringify(PRODUTOS_BASE))
+  };
+  aplicarImagensBase();
+  salvarDados();
+}
+
+function aplicarImagensBase() {
+  const sazonalInicial = {
+    14: 'inverno', 25: 'inverno', 28: 'inverno',
+    16: 'natal', 19: 'blackfriday', 13: 'verao',
+    26: 'diapais', 32: 'voltaaulas', 34: 'verao'
+  };
+  dados.produtos.forEach(p => {
+    if (!p.img && IMGS_BASE[p.id]) p.img = IMGS_BASE[p.id];
+    if (p.fonte === 'JoomPulse' || p.fonte === 'Avant Pro' || p.fonte === 'Avante Pro') p.fonte = 'ML Tendências';
+    if (p.ml) p.ml = p.ml.replace('listado.mercadolivre.com.br', 'lista.mercadolivre.com.br');
+    if (typeof p.custo !== 'number' || p.custo <= 0) p.custo = Math.round(p.preco * 0.68);
+    if (typeof p.nota !== 'string') p.nota = '';
+    if (p.foco !== true && p.foco !== false) p.foco = false;
+    if (!p.sazonal) p.sazonal = sazonalInicial[p.id] || null;
+  });
+  dados.departamentos.forEach(d => {
+    const base = DEPARTAMENTOS_BASE.find(x => x.id === d.id);
+    if (!d.img && base && base.img) d.img = base.img;
+    else if (base && base.img && d.img && /upload\.wikimedia\.org|http2\.mlstatic\.com/.test(d.img)) d.img = base.img;
+    if (base && base.link) d.link = base.link;
+  });
+}
+function salvarDados() { localStorage.setItem(LS_KEY, JSON.stringify(dados)); }
+
+/* =========================================================
+   GERADOR DE MÉTRICAS (simulação de análise "com IA")
+   ========================================================= */
+const SS_SALT = 'mlp_salt';
+function semente() {
+  const s = sessionStorage.getItem(SS_SALT) || '1';
+  return parseInt(s, 10);
+}
+function mulberry32(a) {
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+const fmt = n => n.toLocaleString('pt-BR');
+const moeda = n => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const pct = n => (n * 100).toFixed(1).replace('.', ',') + '%';
+
+function analisarProduto(p) {
+  const rnd = mulberry32(p.id * 7919 + semente() * 104729);
+  const fator = p.tendencia === 'alta' ? 1.25 : p.tendencia === 'queda' ? 0.7 : 1;
+  const visitasDia = Math.round((p.buscas / 30) * fator * (0.55 + rnd() * 0.3));
+  const conversao = p.tendencia === 'alta' ? 0.06 + rnd() * 0.05 : p.tendencia === 'queda' ? 0.03 + rnd() * 0.03 : 0.04 + rnd() * 0.04;
+  const vendasDia = Math.max(1, Math.round(visitasDia * conversao));
+  const vendasMes = vendasDia * 30;
+  const comissao = 0.13 + rnd() * 0.06;
+  const imposto = 0.1442;
+  const recebe = p.preco * (1 - comissao - imposto);
+  const recomendacao = p.concorrencia === 'alta' ? p.preco * 0.93 : p.concorrencia === 'baixa' ? p.preco * 1.05 : p.preco;
+  const faturamento = vendasMes * p.preco;
+  const mes = Math.floor(rnd() * 30) + 2;
+  const ano = 2025 + Math.floor(rnd() * 2);
+  const dia = Math.floor(rnd() * 27) + 1;
+  const catalogo = rnd() > 0.45;
+  return {
+    visitasDia,
+    vendasDia,
+    vendasMes,
+    conversao,
+    criadoEm: `${String(dia).padStart(2, '0')}/${String(mes).padStart(2, '0')}/${ano}`,
+    catalogo,
+    imposto,
+    recebe,
+    recomendacao,
+    comissao,
+    faturamento
+  };
+}
+
+/* =========================================================
+   HELPERS DE RENDER
+   ========================================================= */
+const $ = sel => document.querySelector(sel);
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+function nomeDept(id) {
+  const d = dados.departamentos.find(x => x.id === id);
+  return d ? d.nome : id;
+}
+function emojiProduto(p) {
+  const emoji = esc(p.emoji || '🛒');
+  if (p.img) {
+    return `
+      <img src="${esc(p.img)}" alt="${esc(p.nome)}" loading="lazy"
+        onerror="this.style.display='none';var f=this.parentNode.querySelector('.thumb-fallback');if(f){f.style.display='flex';}">
+      <span class="thumb-fallback" style="display:none;">${emoji}</span>`;
+  }
+  return `<span class="thumb-fallback" style="display:flex;">${emoji}</span>`;
+}
+
+function tendenciaLabel(t) {
+  return t === 'alta' ? 'Em alta' : t === 'queda' ? 'Em queda' : 'Estável';
+}
+
+/* ---- Stat cards ---- */
+function renderStats() {
+  const totalBuscas = dados.produtos.reduce((s, p) => s + p.buscas, 0);
+  const emAlta = dados.produtos.filter(p => p.tendencia === 'alta').length;
+  const precoMedio = dados.produtos.reduce((s, p) => s + p.preco, 0) / dados.produtos.length;
+  const cards = [
+    { l: 'Produtos monitorados', v: fmt(dados.produtos.length), s: 'em ' + dados.departamentos.length + ' departamentos', d: true },
+    { l: 'Buscas por mês', v: fmt(totalBuscas), s: 'volume total estimado', d: true },
+    { l: 'Em alta', v: fmt(emAlta), s: 'produtos em crescimento', d: false, c: 'var(--verde)' },
+    { l: 'Preço médio', v: moeda(precoMedio), s: 'entre os monitorados', d: false }
+  ];
+  $('#statCards').innerHTML = cards.map(c => `
+    <div class="card">
+      <div class="label">${c.l}</div>
+      <div class="value" style="color:${c.c || 'inherit'}">${c.v}</div>
+      <div class="sub">${c.s}</div>
+    </div>`).join('');
+}
+
+/* ---- Pizza de departamentos ---- */
+const DEPT_CORES = ['#2563eb', '#ffc800', '#16a34a', '#dc2626', '#9333ea', '#06b6d4', '#f97316', '#ec4899'];
+function renderDeptPie() {
+  const el = $('#deptPie');
+  if (!el) return;
+  const total = dados.produtos.reduce((s, p) => s + p.buscas, 0);
+  const partes = dados.departamentos.map(d => {
+    const valor = dados.produtos.filter(p => p.dept === d.id).reduce((s, p) => s + p.buscas, 0);
+    return { nome: d.nome, valor, pct: total ? (valor / total) * 100 : 0 };
+  }).sort((a, b) => b.valor - a.valor);
+  let acc = 0;
+  const fatias = partes.map((pt, i) => {
+    const from = acc;
+    acc += total ? (pt.valor / total) * 360 : 0;
+    return `${DEPT_CORES[i % DEPT_CORES.length]} ${from}deg ${acc}deg`;
+  }).join(', ');
+  el.innerHTML = `
+    <div class="pie-wrap">
+      <div class="pie-chart" style="background:conic-gradient(${fatias})">
+        <div class="pie-hole">
+          <div class="v">${dados.departamentos.length}</div>
+          <div class="l">departamentos</div>
+        </div>
+      </div>
+      <div class="pie-legend">
+        ${partes.map((pt, i) => `
+          <div class="pie-legend-item">
+            <span class="dot" style="background:${DEPT_CORES[i % DEPT_CORES.length]}"></span>
+            <span class="nome">${esc(pt.nome)}</span>
+            <span class="pct">${pt.pct.toFixed(1).replace('.', ',')}%</span>
+            <span class="val">${fmt(pt.valor)}</span>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+/* ---- Relatório (CSV e PDF) ---- */
+function exportarCSV() {
+  const linhas = [['Produto', 'Departamento', 'Preço médio', 'Buscas/mês', 'Tendência', 'Concorrência', 'Fonte', 'Link ML']];
+  dados.produtos.slice().sort((a, b) => b.buscas - a.buscas).forEach(p => {
+    linhas.push([p.nome, nomeDept(p.dept), p.preco, p.buscas, tendenciaLabel(p.tendencia), p.concorrencia, p.fonte, p.ml]);
+  });
+  const csv = linhas.map(r => r.map(c => '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"').join(';')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'pronix-radar-produtos.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(a.href);
+  toast('Relatório CSV baixado.');
+}
+
+function gerarPDF() {
+  const el = $('#reportePrint');
+  const totalBuscas = dados.produtos.reduce((s, p) => s + p.buscas, 0);
+  const data = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+  const emAlta = dados.produtos.filter(p => p.tendencia === 'alta').length;
+  const precoMedio = dados.produtos.reduce((s, p) => s + p.preco, 0) / (dados.produtos.length || 1);
+  const depts = dados.departamentos.map(d => {
+    const valor = dados.produtos.filter(p => p.dept === d.id).reduce((s, p) => s + p.buscas, 0);
+    const qtd = dados.produtos.filter(p => p.dept === d.id).length;
+    return { nome: d.nome, qtd, valor, pct: totalBuscas ? (valor / totalBuscas) * 100 : 0 };
+  }).sort((a, b) => b.valor - a.valor);
+  const top = dados.produtos.slice().sort((a, b) => b.buscas - a.buscas).slice(0, 10);
+  const todas = dados.produtos.slice().sort((a, b) => b.buscas - a.buscas);
+
+  const stat = (l, v) => `
+    <td style="background:#f3efe9;border:1px solid #e7e2d9;border-radius:8px;padding:10px 14px;width:25%;vertical-align:top;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#6e6e73;font-weight:700;">${l}</div>
+      <div style="font-size:20px;font-weight:800;margin-top:4px;">${v}</div>
+    </td>`;
+  const linhaDept = (d, i) => `
+    <tr>
+      <td style="padding:7px 10px;border-bottom:1px solid #e7e2d9;">${i + 1}. ${d.nome}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e7e2d9;text-align:right;">${d.qtd} prod.</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e7e2d9;text-align:right;">${fmt(d.valor)}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e7e2d9;text-align:right;font-weight:800;">${d.pct.toFixed(1).replace('.', ',')}%</td>
+    </tr>`;
+  const linhaProd = p => `
+    <tr>
+      <td style="padding:7px 10px;border-bottom:1px solid #e7e2d9;">${esc(p.nome)}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e7e2d9;">${esc(nomeDept(p.dept))}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e7e2d9;text-align:right;">${moeda(p.preco)}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e7e2d9;text-align:right;">${fmt(p.buscas)}</td>
+      <td style="padding:7px 10px;border-bottom:1px solid #e7e2d9;">${tendenciaLabel(p.tendencia)}</td>
+    </tr>`;
+
+  el.innerHTML = `
+    <div style="font-family:'Inter',Arial,sans-serif;color:#0a0a0c;max-width:820px;margin:0 auto;">
+      <div style="border-bottom:4px solid #ffc800;padding-bottom:12px;margin-bottom:16px;">
+        <div style="font-size:24px;font-weight:800;letter-spacing:-.5px;">Pronix Radar</div>
+        <div style="font-size:13px;color:#6e6e73;">Relatório de tendências de busca no Mercado Livre — ${data}</div>
+      </div>
+
+      <table style="width:100%;border-collapse:separate;border-spacing:6px;margin:0 -6px 10px;">
+        <tr>
+          ${stat('Produtos monitorados', dados.produtos.length)}
+          ${stat('Buscas/mês (total)', fmt(totalBuscas))}
+          ${stat('Em alta', emAlta)}
+          ${stat('Preço médio', moeda(Math.round(precoMedio)))}
+        </tr>
+      </table>
+
+      <h3 style="font-size:15px;font-weight:800;margin:16px 0 6px;">Participação por departamento</h3>
+      <table style="width:100%;border-collapse:collapse;border:1px solid #e7e2d9;">
+        <tr style="background:#0a0a0c;color:#fff;">
+          <th style="padding:7px 10px;text-align:left;font-size:11px;text-transform:uppercase;">Departamento</th>
+          <th style="padding:7px 10px;text-align:right;font-size:11px;text-transform:uppercase;">Produtos</th>
+          <th style="padding:7px 10px;text-align:right;font-size:11px;text-transform:uppercase;">Buscas/mês</th>
+          <th style="padding:7px 10px;text-align:right;font-size:11px;text-transform:uppercase;">Participação</th>
+        </tr>
+        ${depts.map(linhaDept).join('')}
+      </table>
+
+      <h3 style="font-size:15px;font-weight:800;margin:18px 0 6px;">Top 10 produtos por volume de buscas</h3>
+      <table style="width:100%;border-collapse:collapse;border:1px solid #e7e2d9;">
+        <tr style="background:#0a0a0c;color:#fff;">
+          <th style="padding:7px 10px;text-align:left;font-size:11px;text-transform:uppercase;">Produto</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;text-transform:uppercase;">Departamento</th>
+          <th style="padding:7px 10px;text-align:right;font-size:11px;text-transform:uppercase;">Preço</th>
+          <th style="padding:7px 10px;text-align:right;font-size:11px;text-transform:uppercase;">Buscas/mês</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;text-transform:uppercase;">Tendência</th>
+        </tr>
+        ${top.map(linhaProd).join('')}
+      </table>
+
+      <h3 style="font-size:15px;font-weight:800;margin:18px 0 6px;">Todos os produtos (${todas.length})</h3>
+      <table style="width:100%;border-collapse:collapse;border:1px solid #e7e2d9;">
+        <tr style="background:#0a0a0c;color:#fff;">
+          <th style="padding:7px 10px;text-align:left;font-size:11px;text-transform:uppercase;">Produto</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;text-transform:uppercase;">Departamento</th>
+          <th style="padding:7px 10px;text-align:right;font-size:11px;text-transform:uppercase;">Preço</th>
+          <th style="padding:7px 10px;text-align:right;font-size:11px;text-transform:uppercase;">Buscas/mês</th>
+          <th style="padding:7px 10px;text-align:left;font-size:11px;text-transform:uppercase;">Tendência</th>
+        </tr>
+        ${todas.map(linhaProd).join('')}
+      </table>
+
+      <div style="font-size:11px;color:#6e6e73;margin-top:18px;border-top:1px solid #e7e2d9;padding-top:10px;">
+        Dados estimados com base em tendências públicas de busca do Mercado Livre (tendencias.mercadolivre.com.br). Não há integração com ferramentas pagas. Relatório gerado em ${data}.
+      </div>
+    </div>`;
+  window.print();
+}
+
+/* ---- Histórico de buscas (30 dias) ---- */
+function gerarHistorico(p, dias) {
+  dias = dias || 30;
+  const semente = (p.id * 2654435761) ^ (p.buscas * 40503);
+  const rng = mulberry32(semente >>> 0);
+  const passo = p.tendencia === 'alta' ? 1 + (0.25 + rng() * 0.4) / dias
+             : p.tendencia === 'queda' ? 1 - (0.15 + rng() * 0.35) / dias
+             : 1 + (rng() - 0.5) * 0.03;
+  const vals = [];
+  let v = (p.buscas / dias) * (0.7 + rng() * 0.5);
+  for (let i = 0; i < dias; i++) {
+    v = v * passo * (0.9 + rng() * 0.2);
+    vals.push(Math.max(1, Math.round(v)));
+  }
+  const soma = vals.reduce((s, x) => s + x, 0);
+  const fator = soma ? p.buscas / soma : 1;
+  return vals.map(x => Math.round(x * fator));
+}
+
+function renderHistorico() {
+  const el = $('#histChart');
+  if (!el) return;
+  const sel = $('#histProduto');
+  const atual = parseInt(sel.value, 10);
+  if (sel.options.length === 0) {
+    const top = dados.produtos.slice().sort((a, b) => b.buscas - a.buscas).slice(0, 12);
+    sel.innerHTML = top.map(p => `<option value="${p.id}">${esc(p.nome)}</option>`).join('');
+  }
+  sel.value = dados.produtos.some(p => p.id === atual) ? atual : sel.options[0].value;
+  const p = dados.produtos.find(x => x.id === parseInt(sel.value, 10)) || dados.produtos[0];
+  const vals = gerarHistorico(p);
+  const W = 760, H = 240, pad = 34;
+  const max = Math.max(...vals) * 1.12;
+  const min = Math.min(...vals) * 0.85;
+  const range = (max - min) || 1;
+  const px = i => pad + (i / (vals.length - 1)) * (W - pad * 2);
+  const py = v => H - pad - ((v - min) / range) * (H - pad * 2);
+  const pontos = vals.map((v, i) => px(i).toFixed(1) + ',' + py(v).toFixed(1));
+  const area = 'M' + pontos[0] + ' L' + pontos.join(' L') + ' L' + px(vals.length - 1).toFixed(1) + ',' + (H - pad).toFixed(1) + ' L' + pad + ',' + (H - pad).toFixed(1) + ' Z';
+  const gridY = [0, 1, 2, 3, 4].map(i => {
+    const v = min + (range * i) / 4;
+    return `<line class="hist-grid" x1="${pad}" y1="${py(v)}" x2="${W - pad}" y2="${py(v)}"/>
+      <text x="${pad - 6}" y="${py(v) + 4}" text-anchor="end">${fmt(Math.round(v))}</text>`;
+  }).join('');
+  const media = vals.reduce((s, x) => s + x, 0) / vals.length;
+  const primeiro = vals[0], ultimo = vals[vals.length - 1];
+  const varPct = primeiro ? Math.round(((ultimo - primeiro) / primeiro) * 100) : 0;
+  const sinal = varPct >= 0 ? '+' : '';
+  const d = dados.produtos.find(x => x.id === p.id);
+  el.innerHTML = `
+    <div class="hist-chart-wrap">
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução de buscas">
+        ${gridY}
+        <line class="hist-grid" x1="${pad}" y1="${H - pad}" x2="${W - pad}" y2="${H - pad}"/>
+        <path class="hist-area" d="${area}"/>
+        <path class="hist-line" d="M${pontos.join(' L')}"/>
+        <circle class="hist-pt" cx="${px(0)}" cy="${py(vals[0])}" r="4"><title>Dia 1: ${fmt(vals[0])} buscas</title></circle>
+        <circle class="hist-pt" cx="${px(vals.length - 1)}" cy="${py(vals[vals.length - 1])}" r="4"><title>Dia 30: ${fmt(vals[vals.length - 1])} buscas</title></circle>
+        <text x="${pad}" y="${H - pad + 16}">Dia 1</text>
+        <text x="${W - pad}" y="${H - pad + 16}" text-anchor="end">Dia 30</text>
+        <text x="${W - pad}" y="18" text-anchor="end">${esc(d ? d.nome : '')}</text>
+      </svg>
+      <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:13px;">
+        <span style="color:var(--cinza);">Média diária: <b style="color:var(--texto);">${fmt(Math.round(media))} buscas</b></span>
+        <span style="color:var(--cinza);">Início: <b style="color:var(--texto);">${fmt(primeiro)}</b></span>
+        <span style="color:var(--cinza);">Final: <b style="color:var(--texto);">${fmt(ultimo)}</b></span>
+        <span style="color:var(--cinza);">Variação no período: <b style="color:${varPct >= 0 ? 'var(--verde)' : 'var(--vermelho)'}">${sinal}${varPct}%</b></span>
+      </div>
+    </div>`;
+}
+/* ---- Trend distribution ---- */
+function renderTrend() {
+  const grupos = { alta: [], estavel: [], queda: [] };
+  dados.produtos.forEach(p => grupos[p.tendencia] && grupos[p.tendencia].push(p));
+  const nomes = { alta: 'Em alta', estavel: 'Estável', queda: 'Em queda' };
+  const cores = { alta: 'var(--verde)', estavel: '#2563eb', queda: 'var(--vermelho)' };
+  const chaves = ['alta', 'estavel', 'queda'];
+  $('#trendGrid').innerHTML = chaves.map(chave => {
+    const lista = grupos[chave].slice().sort((a, b) => b.buscas - a.buscas);
+    const itens = lista.length
+      ? lista.slice(0, 12).map((p, i) => `
+        <li>
+          <span class="rank">${i + 1}</span>
+          <a href="${esc(p.ml)}" target="_blank" rel="noopener" title="Abrir busca no ML">${esc(p.nome)}</a>
+          <span class="buscas">${fmt(p.buscas)} buscas/mês</span>
+        </li>`).join('')
+      : '<li style="color:var(--cinza)">Nenhum produto nessa categoria.</li>';
+    return `
+      <div class="trend-block recolhido">
+        <span class="tag ${chave}" style="background:${cores[chave]}" title="Clique para mostrar os produtos">${nomes[chave]} — ${lista.length} <span class="chev">▼</span></span>
+        <ul>${itens}</ul>
+      </div>`;
+  }).join('');
+  $('#trendGrid').querySelectorAll('.trend-block').forEach(block => {
+    block.querySelector('.tag').onclick = () => {
+      block.classList.toggle('recolhido');
+      block.querySelector('.chev').textContent = block.classList.contains('recolhido') ? '▼' : '▲';
+    };
+  });
+}
+
+/* ---- Top produtos ---- */
+function renderTop() {
+  const top = dados.produtos.slice().sort((a, b) => b.buscas - a.buscas).slice(0, 6);
+  $('#topProdutos').innerHTML = top.map(p => cardProduto(p, true)).join('');
+  anexarEventosCard('#topProdutos');
+}
+
+/* ---- Oportunidades do dia ---- */
+function renderOportunidades() {
+  const elegiveis = dados.produtos
+    .map(p => ({ p, score: scoreOportunidade(p), marg: margemBruta(p), lucroMes: lucroMensal(p) }))
+    .filter(x => x.score >= 60 && x.marg >= 15)
+    .sort((a, b) => b.lucroMes - a.lucroMes);
+  const grid = $('#oppGrid');
+  if (!grid) return;
+  if (!elegiveis.length) {
+    grid.innerHTML = '<div class="vazio">Nenhum produto atingiu o corte de oportunidade (≥60) com margem saudável (≥15%) hoje.</div>';
+  } else {
+    grid.innerHTML = elegiveis.map(x => cardProduto(x.p, false)).join('');
+    anexarEventosCard('#oppGrid');
+  }
+  const el = $('#oppStats');
+  if (el) {
+    const somaLucro = elegiveis.reduce((s, x) => s + x.lucroMes, 0);
+    const topScore = elegiveis.length ? elegiveis[0].score : 0;
+    const cards = [
+      { l: 'Oportunidades hoje', v: fmt(elegiveis.length), s: 'com score ≥60 e margem ≥15%', d: true },
+      { l: 'Lucro mensal estimado', v: moeda(somaLucro), s: 'soma das oportunidades listadas', d: true },
+      { l: 'Melhor oportunidade', v: topScore + '/100', s: 'maior score do ranking', d: true }
+    ];
+    el.innerHTML = cards.map(c => `
+      <div class="card">
+        <div class="label">${c.l}</div>
+        <div class="value">${c.v}</div>
+        <div class="sub">${c.s}</div>
+      </div>`).join('');
+  }
+}
+
+/* ---- Departamentos ---- */
+function renderDepartamentos() {
+  $('#deptGrid').innerHTML = dados.departamentos.map(d => {
+    const qtd = dados.produtos.filter(p => p.dept === d.id).length;
+    const totalBuscas = dados.produtos.filter(p => p.dept === d.id).reduce((s, p) => s + p.buscas, 0);
+    return `
+      <a class="dept-card" href="${esc(d.link)}" target="_blank" rel="noopener">
+        <div class="thumb">
+          <img src="${esc(d.img)}" alt="${esc(d.nome)}" loading="lazy"
+            onerror="this.style.display='none';var f=this.parentNode.querySelector('.thumb-fallback');if(f){f.style.display='flex';}">
+          <span class="thumb-fallback" style="display:none;">${esc(d.emoji)}</span>
+          <span class="badge">${esc(d.emoji)}</span>
+        </div>
+        <div class="body">
+          <h4>${esc(d.nome)} <span class="arrow">→</span></h4>
+          <p class="desc">${esc(d.desc)}</p>
+          <div class="meta">
+            <span class="chip">${qtd} produtos</span>
+            <span class="chip">${fmt(totalBuscas)} buscas/mês</span>
+          </div>
+        </div>
+      </a>`;
+  }).join('');
+}
+
+/* ---- Filtros ---- */
+function preencherFiltros() {
+  const sel = $('#fDept');
+  const atual = sel.value;
+  sel.innerHTML = '<option value="">Todos os departamentos</option>' + dados.departamentos.map(d =>
+    `<option value="${esc(d.id)}">${esc(d.nome)}</option>`).join('');
+  sel.value = dados.departamentos.some(d => d.id === atual) ? atual : '';
+  const selEdit = $('#fDeptEdit');
+  selEdit.innerHTML = dados.departamentos.map(d =>
+    `<option value="${esc(d.id)}">${esc(d.nome)}</option>`).join('');
+}
+
+/* ---- Cards de produto ---- */
+function scoreOportunidade(p) {
+  const arr = dados.produtos.map(x => x.buscas);
+  const min = Math.min(...arr), max = Math.max(...arr);
+  const bScore = max > min ? ((p.buscas - min) / (max - min)) * 100 : 50;
+  const tScore = ({ alta: 100, estavel: 60, queda: 20 })[p.tendencia] || 50;
+  const cScore = ({ baixa: 100, media: 65, alta: 30 })[p.concorrencia] || 50;
+  return Math.round(0.5 * bScore + 0.3 * tScore + 0.2 * cScore);
+}
+function scoreCor(s) { return s >= 70 ? 'var(--verde)' : s >= 45 ? 'var(--amarelo)' : 'var(--vermelho)'; }
+function scoreLabel(s) { return s >= 70 ? 'Alta oportunidade' : s >= 45 ? 'Média oportunidade' : 'Baixa oportunidade'; }
+
+/* ---- Margem, lucro e estoque ---- */
+const SAZONAL_TAGS = [
+  { v: 'verao',     r: '🔥', n: 'Alta de verão' },
+  { v: 'inverno',   r: '❄️', n: 'Alta de inverno' },
+  { v: 'diamae',    r: '💝', n: 'Dia das Mães' },
+  { v: 'diapais',   r: '👔', n: 'Dia dos Pais' },
+  { v: 'blackfriday', r: '🛍️', n: 'Black Friday' },
+  { v: 'natal',     r: '🎄', n: 'Natal' },
+  { v: 'voltaaulas', r: '🎒', n: 'Volta às aulas' },
+  { v: 'copadomundo', r: '⚽', n: 'Copa/eventos' }
+];
+function sazonalLabel(v) {
+  const t = SAZONAL_TAGS.find(x => x.v === v);
+  return t ? `${t.r} ${t.n}` : '';
+}
+function margemBruta(p) {
+  const custo = p.custo || Math.round(p.preco * 0.68);
+  return p.preco > 0 ? Math.round(((p.preco - custo) / p.preco) * 100) : 0;
+}
+function lucroUnitario(p) {
+  return p.preco - (p.custo || Math.round(p.preco * 0.68));
+}
+function converterVendas(p) {
+  const taxa = ({ baixa: 0.010, media: 0.0055, alta: 0.0028 })[p.concorrencia] || 0.005;
+  return Math.max(1, Math.round(p.buscas * taxa));
+}
+function lucroMensal(p) {
+  return converterVendas(p) * lucroUnitario(p);
+}
+function qtySugerida(p) {
+  const base = Math.max(1, Math.round(converterVendas(p) / 6));
+  const dezena = Math.max(10, Math.ceil(base / 10) * 10);
+  return Math.min(90, dezena);
+}
+
+function cardProduto(p, compacto) {
+  const dept = nomeDept(p.dept);
+  const tendCls = p.tendencia;
+  const score = scoreOportunidade(p);
+  const sCor = scoreCor(score);
+  const marg = margemBruta(p);
+  const lucro = lucroUnitario(p);
+  const lucroMes = lucroMensal(p);
+  const saz = sazonalLabel(p.sazonal);
+  return `
+    <div class="prod-card${p.foco ? ' foco' : ''}" data-id="${p.id}">
+      <div class="thumb">
+        ${emojiProduto(p)}
+        <span class="trend ${tendCls}">${tendenciaLabel(p.tendencia)}</span>
+        ${saz ? `<span class="sazonal">${saz}</span>` : ''}
+      </div>
+      <div class="body">
+        <div class="nome"><a href="${esc(p.ml)}" target="_blank" rel="noopener" title="Abrir busca no ML">${esc(p.nome)}</a>
+          <button class="btn-foco" title="${p.foco ? 'Remover dos meus focos' : 'Marcar como foco'}" data-foco="${p.id}">${p.foco ? '⭐' : '☆'}</button>
+        </div>
+        <div class="preco">${moeda(p.preco)} <small>preço médio</small></div>
+        <div class="info-grid">
+          <div class="info-item destaque">
+            <div class="l">Buscas/mês</div>
+            <div class="v">${fmt(p.buscas)}</div>
+          </div>
+          <div class="info-item">
+            <div class="l">Departamento</div>
+            <div class="v">${esc(dept)}</div>
+          </div>
+          <div class="info-item">
+            <div class="l">Concorrência</div>
+            <div class="v" style="text-transform:capitalize">${esc(p.concorrencia)}</div>
+          </div>
+          <div class="info-item">
+            <div class="l">Fonte</div>
+            <div class="v" style="font-size:11px">${esc(p.fonte)}</div>
+          </div>
+          <div class="info-item">
+            <div class="l">Margem</div>
+            <div class="v" style="color:${marg < 20 ? 'var(--vermelho)' : marg < 35 ? 'var(--amarelo)' : 'var(--verde)'}">${marg}%</div>
+          </div>
+          <div class="info-item">
+            <div class="l">Lucro/mês*</div>
+            <div class="v">${moeda(lucroMes)}</div>
+          </div>
+          <div class="info-item">
+            <div class="l">Lucro unit.</div>
+            <div class="v">${moeda(lucro)}</div>
+          </div>
+          <div class="info-item">
+            <div class="l">Qtd. sugerida</div>
+            <div class="v">${qtySugerida(p)} un.</div>
+          </div>
+        </div>
+        <div class="score-row" title="${scoreLabel(score)}">
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;">
+            <span style="color:var(--cinza);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">Oportunidade</span>
+            <b style="color:${sCor}">${score}/100</b>
+          </div>
+          <div class="score-bar"><div class="score-fill" style="width:${score}%;background:${sCor}"></div></div>
+        </div>
+        ${p.nota ? `<div class="nota-card">📝 ${esc(p.nota)}</div>` : ''}
+        ${compacto ? `
+        <div class="acoes">
+          <a class="btn btn-amarelo btn-pequeno" href="${esc(p.ml)}" target="_blank" rel="noopener">Ver no ML</a>
+        </div>` : `
+        <div class="acoes">
+          <button class="btn btn-amarelo btn-pequeno analisar">Analisar com IA</button>
+          <button class="btn btn-cinza btn-pequeno btn-nota" data-nota="${p.id}">${p.nota ? '📝 Nota' : '📝'}</button>
+          <a class="btn btn-azul btn-pequeno" href="${esc(p.ml)}" target="_blank" rel="noopener">Ver no ML</a>
+          ${admin ? `
+            <button class="btn btn-cinza btn-pequeno admin-btn editar" title="Editar">✏️</button>
+            <button class="btn btn-perigo admin-btn excluir" title="Excluir">🗑️</button>` : ''}
+        </div>`}
+        <div class="metrics" style="display:none"></div>
+      </div>
+    </div>`;
+}
+
+function renderProdutos() {
+  const q = ($('#fBusca').value || '').trim().toLowerCase();
+  const d = $('#fDept').value;
+  const t = $('#fTrend').value;
+  const c = $('#fConc').value;
+  const f = $('#fFoco').value;
+  const s = $('#fSort').value || 'buscas';
+  const lista = dados.produtos.filter(p => {
+    if (q && !p.nome.toLowerCase().includes(q)) return false;
+    if (d && p.dept !== d) return false;
+    if (t && p.tendencia !== t) return false;
+    if (c && p.concorrencia !== c) return false;
+    if (f === 'foco' && !p.foco) return false;
+    return true;
+  }).sort((a, b) =>
+    s === 'oportunidade' ? scoreOportunidade(b) - scoreOportunidade(a)
+    : s === 'preco' ? b.preco - a.preco
+    : b.buscas - a.buscas);
+  $('#prodGrid').innerHTML = lista.map(p => cardProduto(p, false)).join('');
+  $('#semResultados').style.display = lista.length ? 'none' : 'block';
+  anexarEventosCard('#prodGrid');
+}
+
+function anexarEventosCard(seletor) {
+  const grid = $(seletor);
+  if (!grid) return;
+  grid.querySelectorAll('.analisar').forEach(btn => {
+    btn.onclick = e => {
+      e.preventDefault();
+      const card = btn.closest('.prod-card');
+      const id = parseInt(card.dataset.id, 10);
+      const p = dados.produtos.find(x => x.id === id);
+      const m = card.querySelector('.metrics');
+      if (m.style.display === 'none' || !m.style.display) {
+        m.innerHTML = htmlMetricas(p);
+        m.style.display = 'block';
+        btn.textContent = 'Fechar análise';
+      } else {
+        m.style.display = 'none';
+        btn.textContent = 'Analisar com IA';
+      }
+    };
+  });
+  grid.querySelectorAll('.editar').forEach(btn => {
+    btn.onclick = e => {
+      e.preventDefault();
+      const id = parseInt(btn.closest('.prod-card').dataset.id, 10);
+      abrirModal(id);
+    };
+  });
+  grid.querySelectorAll('.excluir').forEach(btn => {
+    btn.onclick = e => {
+      e.preventDefault();
+      const id = parseInt(btn.closest('.prod-card').dataset.id, 10);
+      dados.produtos = dados.produtos.filter(x => x.id !== id);
+      salvarDados();
+      renderTudo();
+      toast('Produto excluído.');
+    };
+  });
+  grid.querySelectorAll('.btn-foco').forEach(btn => {
+    btn.onclick = e => {
+      e.preventDefault();
+      const id = parseInt(btn.closest('.prod-card').dataset.id, 10);
+      const p = dados.produtos.find(x => x.id === id);
+      if (p) {
+        p.foco = !p.foco;
+        salvarDados();
+        renderTudo();
+        toast(p.foco ? 'Adicionado aos meus focos ⭐' : 'Removido dos meus focos.');
+      }
+    };
+  });
+  grid.querySelectorAll('.btn-nota').forEach(btn => {
+    btn.onclick = e => {
+      e.preventDefault();
+      const id = parseInt(btn.closest('.prod-card').dataset.id, 10);
+      const p = dados.produtos.find(x => x.id === id);
+      if (!p) return;
+      const nota = prompt('Anotação para este produto:', p.nota || '');
+      if (nota === null) return;
+      p.nota = nota.trim();
+      salvarDados();
+      renderTudo();
+      toast(p.nota ? 'Anotação salva 📝' : 'Anotação removida.');
+    };
+  });
+}
+
+function htmlMetricas(p) {
+  const m = analisarProduto(p);
+  const conc = p.concorrencia;
+  const concLabel = { baixa: 'baixa', media: 'média', alta: 'alta' };
+  const nota = p.tendencia === 'alta' && (conc === 'baixa' || conc === 'media') ? 'good'
+             : p.tendencia === 'queda' || conc === 'alta' ? 'bad' : 'good';
+  return `
+    <div class="m-title">📊 Análise de demanda</div>
+    <div class="m-grid">
+      <div class="m-item"><div class="l">Visitas/dia</div><div class="v">${fmt(m.visitasDia)}</div></div>
+      <div class="m-item"><div class="l">Vendas/dia</div><div class="v">${fmt(m.vendasDia)}</div></div>
+      <div class="m-item"><div class="l">Vendas/mês</div><div class="v">${fmt(m.vendasMes)}</div></div>
+      <div class="m-item"><div class="l">Conversão</div><div class="v">${pct(m.conversao)}</div></div>
+      <div class="m-item"><div class="l">Anúncio criado em</div><div class="v" style="font-size:12px">${m.criadoEm}</div></div>
+      <div class="m-item"><div class="l">Catálogo</div><div class="v" style="font-size:12px">${m.catalogo ? 'Criado em ' + m.criadoEm : 'Anúncio tradicional'}</div></div>
+      <div class="m-item"><div class="l">Comissão ML</div><div class="v">${pct(m.comissao)}</div></div>
+      <div class="m-item"><div class="l">Imposto estimado</div><div class="v">${pct(m.imposto)}</div></div>
+      <div class="m-item"><div class="l">Seller recebe</div><div class="v">${moeda(m.recebe)}</div></div>
+      <div class="m-item"><div class="l">Preço recomendado</div><div class="v">${moeda(m.recomendacao)}</div></div>
+      <div class="m-item"><div class="l">Faturamento/mês</div><div class="v">${moeda(m.faturamento)}</div></div>
+    </div>
+    <div class="obs"><b>Análise:</b> demanda ${p.tendencia === 'alta' ? 'em alta' : p.tendencia === 'queda' ? 'em queda' : 'estável'} e concorrência ${concLabel}. Volume de ${fmt(p.buscas)} buscas/mês sugere um mercado
+      ${nota === 'good' ? 'atrativo para novos vendedores, com boas oportunidades de posicionamento.' : 'mais disputado — avalie diferenciação no anúncio antes de investir em estoque.'}
+      Fonte de referência: ${esc(p.fonte)} (dados públicos estimados).</div>`;
+}
+
+/* =========================================================
+   MODAL (adicionar / editar)
+   ========================================================= */
+function abrirModal(id) {
+  editandoId = id || null;
+  $('#modalTitle').textContent = id ? 'Editar produto' : 'Novo produto';
+  const p = id ? dados.produtos.find(x => x.id === id) : null;
+  $('#fNome').value = p ? p.nome : '';
+  $('#fDeptEdit').value = p ? p.dept : dados.departamentos[0].id;
+  $('#fPreco').value = p ? p.preco : '';
+  $('#fCusto').value = p ? (p.custo || Math.round(p.preco * 0.68)) : '';
+  $('#fBuscas').value = p ? p.buscas : '';
+  $('#fTrendEdit').value = p ? p.tendencia : 'alta';
+  $('#fConcEdit').value = p ? p.concorrencia : 'media';
+  $('#fEmoji').value = p ? p.emoji : '🛒';
+  $('#fImg').value = p && p.img ? p.img : '';
+  $('#fMl').value = p ? p.ml : 'https://lista.mercadolivre.com.br/';
+  $('#fFonte').value = p ? p.fonte : 'Manual';
+  $('#fSazonal').value = p && p.sazonal ? p.sazonal : '';
+  $('#modalBg').classList.add('open');
+}
+function fecharModal() { $('#modalBg').classList.remove('open'); }
+
+function salvarProduto() {
+  const nome = $('#fNome').value.trim();
+  if (!nome) { toast('Informe o nome do produto.'); return; }
+  const dadosForm = {
+    nome,
+    dept: $('#fDeptEdit').value,
+    preco: parseFloat($('#fPreco').value) || 0,
+    custo: parseFloat($('#fCusto').value) || 0,
+    buscas: parseInt($('#fBuscas').value, 10) || 0,
+    tendencia: $('#fTrendEdit').value,
+    concorrencia: $('#fConcEdit').value,
+    emoji: $('#fEmoji').value.trim() || '🛒',
+    img: $('#fImg').value.trim(),
+    ml: $('#fMl').value.trim(),
+    fonte: $('#fFonte').value,
+    sazonal: $('#fSazonal').value || null
+  };
+  if (editandoId) {
+    const p = dados.produtos.find(x => x.id === editandoId);
+    Object.assign(p, dadosForm);
+    toast('Produto atualizado.');
+  } else {
+    const novoId = Math.max(0, ...dados.produtos.map(x => x.id)) + 1;
+    dados.produtos.push(Object.assign({ id: novoId }, dadosForm));
+    toast('Produto adicionado.');
+  }
+  salvarDados();
+  fecharModal();
+  renderTudo();
+}
+
+/* =========================================================
+   AÇÕES GLOBAIS
+   ========================================================= */
+function renderTudo() {
+  renderStats();
+  renderDeptPie();
+  renderHistorico();
+  renderTrend();
+  renderTop();
+  renderDepartamentos();
+  preencherFiltros();
+  renderProdutos();
+  renderOportunidades();
+}
+
+function navegar(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+let toastTimer = null;
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* =========================================================
+   ALERTAS DE PRODUTO EM ALTA
+   ========================================================= */
+const BASE_KEY = 'mlp_base_buscas';
+let alertasAtivos = false;
+
+function checarAlertas() {
+  if (!alertasAtivos) return;
+  let base = {};
+  try { base = JSON.parse(sessionStorage.getItem(BASE_KEY) || '{}'); } catch (e) {}
+  const novos = [];
+  dados.produtos.forEach(p => {
+    if (base[p.id] != null && base[p.id] > 0) {
+      const delta = ((p.buscas - base[p.id]) / base[p.id]) * 100;
+      if (delta >= 15) novos.push({ p, delta });
+    }
+  });
+  const novaBase = {};
+  dados.produtos.forEach(p => { novaBase[p.id] = p.buscas; });
+  try { sessionStorage.setItem(BASE_KEY, JSON.stringify(novaBase)); } catch (e) {}
+  if (!novos.length) return;
+  novos.slice(0, 3).forEach(n => {
+    const msg = n.p.nome + ' subiu ' + Math.round(n.delta) + '% nas buscas do Mercado Livre.';
+    try {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        const notif = new Notification('🔺 Produto em alta', { body: msg });
+        setTimeout(() => { try { notif.close(); } catch (e) {} }, 8000);
+      }
+    } catch (e) {}
+    toast('🔺 ' + msg);
+  });
+}
+
+function alternarAlertas() {
+  if (alertasAtivos) {
+    alertasAtivos = false;
+    $('#alertaToggle').classList.remove('on');
+    $('#alertaToggle').textContent = '🔔 Alertas';
+    toast('Alertas desativados.');
+    return;
+  }
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission().then(perm => {
+      if (perm === 'granted') ativarAlertas();
+      else {
+        toast('Sem permissão de notificação; alertas aparecerão só no app.');
+        ativarAlertas();
+      }
+    });
+  } else {
+    ativarAlertas();
+  }
+}
+function ativarAlertas() {
+  alertasAtivos = true;
+  $('#alertaToggle').classList.add('on');
+  $('#alertaToggle').textContent = '🔔 Ativo';
+  checarAlertas();
+  toast('Alertas ativados. Você será avisado quando um produto subir nas buscas.');
+}
+
+/* =========================================================
+   ATUALIZAÇÃO AUTOMÁTICA (pop-up com contagem regressiva)
+   ========================================================= */
+const AUTO_INTERVALO_MS = 15 * 60 * 1000;
+let proximaAtualizacao = 0;
+let timerAuto = null;
+
+function atualizarMetricas() {
+  const s = semente() + 1;
+  sessionStorage.setItem(SS_SALT, String(s));
+  renderTudo();
+  proximaAtualizacao = Date.now() + AUTO_INTERVALO_MS;
+  checarAlertas();
+  toast('Métricas atualizadas com novos dados de tendência.');
+}
+
+function iniciarAutoAtualizacao() {
+  const pill = $('#autoPill');
+  const txt = $('#apTexto');
+  proximaAtualizacao = Date.now() + AUTO_INTERVALO_MS;
+  clearInterval(timerAuto);
+  timerAuto = setInterval(() => {
+    const rest = proximaAtualizacao - Date.now();
+    if (rest <= 0) { atualizarMetricas(); return; }
+    const s = Math.floor(rest / 1000);
+    if (s <= 10) {
+      pill.classList.add('show');
+      pill.classList.add('warn');
+      txt.textContent = 'Atualizando em ' + s + 's...';
+    } else {
+      pill.classList.remove('show');
+      pill.classList.remove('warn');
+    }
+  }, 400);
+}
+
+/* =========================================================
+   INIT
+   ========================================================= */
+document.addEventListener('DOMContentLoaded', () => {
+  carregarDados();
+  renderTudo();
+
+  document.querySelectorAll('.nav button').forEach(b => b.onclick = () => navegar(b.dataset.view));
+
+  $('#adminToggle').onclick = () => {
+    admin = !admin;
+    $('#adminToggle').classList.toggle('on', admin);
+    $('#btnAdd').style.display = admin ? 'inline-flex' : 'none';
+    renderTudo();
+    toast(admin ? 'Modo edição ativado.' : 'Modo edição desativado.');
+  };
+
+  const THEME_KEY = 'mlp_tema';
+  function aplicarTema(escuro) {
+    document.documentElement.setAttribute('data-theme', escuro ? 'dark' : 'light');
+    $('#darkToggle').classList.toggle('on', escuro);
+    $('#darkToggle').textContent = escuro ? '☀️ Claro' : '🌙 Escuro';
+    try { localStorage.setItem(THEME_KEY, escuro ? 'dark' : 'light'); } catch (e) {}
+  }
+  $('#darkToggle').onclick = () => {
+    const escuro = document.documentElement.getAttribute('data-theme') !== 'dark';
+    aplicarTema(escuro);
+    toast(escuro ? 'Modo escuro ativado.' : 'Modo claro ativado.');
+  };
+  aplicarTema(localStorage.getItem(THEME_KEY) === 'dark' || /(^|#)dark($|&)/.test(location.hash));
+
+  $('#btnAtualizar').onclick = () => {
+    atualizarMetricas();
+    iniciarAutoAtualizacao();
+  };
+
+  $('#btnAtualizarOpp').onclick = () => {
+    atualizarMetricas();
+    iniciarAutoAtualizacao();
+    renderOportunidades();
+    toast('Oportunidades do dia recalculadas.');
+  };
+
+  $('#btnRelCSV').onclick = exportarCSV;
+  $('#btnRelPDF').onclick = gerarPDF;
+  $('#histProduto').addEventListener('change', renderHistorico);
+  $('#alertaToggle').onclick = alternarAlertas;
+  checarAlertas();
+  setInterval(checarAlertas, 5 * 60 * 1000);
+
+  $('#apAgora').onclick = () => {
+    atualizarMetricas();
+    iniciarAutoAtualizacao();
+  };
+
+  iniciarAutoAtualizacao();
+
+  $('#btnRestaurar').onclick = () => {
+    if (confirm('Restaurar os dados originais? Suas alterações serão perdidas.')) {
+      localStorage.removeItem(LS_KEY);
+      carregarDados();
+      renderTudo();
+      toast('Dados originais restaurados.');
+    }
+  };
+
+  $('#btnAdd').onclick = () => abrirModal(null);
+  $('#btnCancelar').onclick = fecharModal;
+  $('#btnSalvar').onclick = salvarProduto;
+  $('#modalBg').onclick = e => { if (e.target === $('#modalBg')) fecharModal(); };
+
+  ['fBusca', 'fDept', 'fTrend', 'fConc', 'fFoco', 'fSort'].forEach(id => {
+    document.getElementById(id).addEventListener('input', renderProdutos);
+    document.getElementById(id).addEventListener('change', renderProdutos);
+  });
+});
+</script>
+</body>
+</html>
