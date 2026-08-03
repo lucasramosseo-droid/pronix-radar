@@ -1782,7 +1782,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('#btnRelCSV').onclick = exportarCSV;
   $('#btnRelPDF').onclick = gerarPDF;
-  $('#brandLogo').onclick = () => navegar('painel');
+  $('#brandLogo').onclick = () => { navegar('painel'); location.reload(); };
   $('#histProduto').addEventListener('change', renderHistorico);
   $('#histPeriodo').addEventListener('change', () => {
     const custom = $('#histPeriodo').value === 'custom';
