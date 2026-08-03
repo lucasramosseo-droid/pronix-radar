@@ -1353,7 +1353,7 @@ function htmlMetricas(p) {
       <div class="m-item"><div class="l">Preço recomendado</div><div class="v">${moeda(m.recomendacao)}</div></div>
       <div class="m-item"><div class="l">Faturamento/mês</div><div class="v">${moeda(m.faturamento)}</div></div>
     </div>
-    <div class="obs"><b>Análise:</b> demanda ${p.tendencia === 'alta' ? 'em alta' : p.tendencia === 'queda' ? 'em queda' : 'estável'} e concorrência ${concLabel}. Volume de ${fmt(p.buscas)} buscas/mês sugere um mercado
+    <div class="obs"><b>Análise:</b>       demanda ${p.tendencia === 'alta' ? 'em alta' : p.tendencia === 'queda' ? 'em queda' : 'estável'} e concorrência ${concLabel[conc]}. Volume de ${fmt(p.buscas)} buscas/mês sugere um mercado
       ${nota === 'good' ? 'atrativo para novos vendedores, com boas oportunidades de posicionamento.' : 'mais disputado — avalie diferenciação no anúncio antes de investir em estoque.'}
       Fonte de referência: ${esc(p.fonte)} (dados públicos estimados).</div>`;
 }
