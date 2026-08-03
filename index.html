@@ -1369,7 +1369,7 @@ function qtySugerida(p) {
   return Math.min(90, dezena);
 }
 
-function cardProduto(p, compacto) {
+function cardProduto(p, compacto, editavel) {
   const dept = nomeDept(p.dept);
   const tendCls = p.tendencia;
   const score = scoreOportunidade(p);
@@ -1441,8 +1441,9 @@ function cardProduto(p, compacto) {
           <button class="btn btn-amarelo btn-pequeno analisar">Analisar com IA</button>
           <button class="btn btn-cinza btn-pequeno btn-nota" data-nota="${p.id}">${p.nota ? '📝 Nota' : '📝'}</button>
           <a class="btn btn-azul btn-pequeno" href="${esc(p.ml)}" target="_blank" rel="noopener">Ver no ML</a>
+          ${editavel ? `
           <button class="btn btn-cinza btn-pequeno admin-btn editar" title="Editar">✏️</button>
-          <button class="btn btn-perigo admin-btn excluir" title="Excluir">🗑️</button>
+          <button class="btn btn-perigo admin-btn excluir" title="Excluir">🗑️</button>` : ''}
         </div>`}
         <div class="metrics" style="display:none"></div>
       </div>
@@ -1467,7 +1468,7 @@ function renderProdutos() {
     s === 'oportunidade' ? scoreOportunidade(b) - scoreOportunidade(a)
     : s === 'preco' ? b.preco - a.preco
     : b.buscas - a.buscas);
-  $('#prodGrid').innerHTML = lista.map(p => cardProduto(p, false)).join('');
+  $('#prodGrid').innerHTML = lista.map(p => cardProduto(p, false, true)).join('');
   $('#semResultados').style.display = lista.length ? 'none' : 'block';
   anexarEventosCard('#prodGrid');
 }
