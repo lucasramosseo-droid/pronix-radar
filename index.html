@@ -996,7 +996,12 @@ function gerarPDF() {
         <span style="white-space:nowrap;">PRONIX Radar · gerado em ${data}</span>
       </div>
     </div>`;
-  window.print();
+  const logo = new Image();
+  logo.src = 'https://pronixconsultoria.com.br/wp-content/uploads/2026/02/favicon-150x150.png';
+  let imprimiu = false;
+  const imprimir = () => { if (!imprimiu) { imprimiu = true; window.print(); } };
+  if (logo.complete) { imprimir(); }
+  else { logo.onload = imprimir; logo.onerror = imprimir; setTimeout(imprimir, 1200); }
 }
 
 /* ---- Histórico de buscas (30 dias) ---- */
