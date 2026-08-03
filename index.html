@@ -349,7 +349,7 @@
 <body>
 
 <header class="topbar">
-  <div class="brand">
+  <div class="brand" id="brandLogo" style="cursor:pointer;" title="Ir para o Painel">
     <div class="logo"><img src="https://pronixconsultoria.com.br/wp-content/uploads/2026/02/texto_branco_sem_tag-1-300x73.png" alt="Pronix - Vendas Online na Prática"></div>
     <div>
       <h1>PRONIX Radar</h1>
@@ -1102,10 +1102,7 @@ function renderHistorico() {
     const queda = anterior !== null && v < anterior;
     const diff = anterior !== null ? ((v - anterior) / anterior) * 100 : 0;
     const sinalDiff = diff > 0 ? '+' : '';
-    const info = `Dia ${i + 1} (${data}): ${fmt(v)} buscas` +
-      (anterior !== null ? ` · ${sinalDiff}${diff.toFixed(1).replace('.', ',')}% vs dia anterior` : ' · início do período') +
-      (queda ? ' · ⚠ queda' : '');
-    return `<circle class="hist-pt" cx="${px(i)}" cy="${py(v)}" r="${queda ? 4.5 : 3.5}" fill="${queda ? '#dc2626' : 'var(--amarelo-escuro)'}"><title>${info}</title></circle>`;
+    return `<circle class="hist-pt" data-pt="${i}" cx="${px(i)}" cy="${py(v)}" r="${queda ? 4.5 : 3.5}" fill="${queda ? '#dc2626' : 'var(--amarelo-escuro)'}"><title>${fmt(v)} buscas</title></circle>`;
   }).join('');
 
   const rotulosX = [0, Math.floor((vals.length - 1) / 2), vals.length - 1].map(i => {
@@ -1113,6 +1110,33 @@ function renderHistorico() {
     dt.setDate(dtIni.getDate() + i);
     return `<text x="${px(i)}" y="${H - padX / 2 + 18}" text-anchor="middle">${fmtDia(dt)}</text>`;
   }).join('');
+
+  const detalhe = (i) => {
+    const v = vals[i];
+    const dt = new Date(dtIni);
+    dt.setDate(dtIni.getDate() + i);
+    const data = dt.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const diaSemana = dt.toLocaleDateString('pt-BR', { weekday: 'long' });
+    const anterior = i > 0 ? vals[i - 1] : null;
+    const queda = anterior !== null && v < anterior;
+    const diff = anterior !== null ? ((v - anterior) / anterior) * 100 : 0;
+    const sinalDiff = diff > 0 ? '+' : '';
+    const corDiff = diff > 0 ? 'var(--verde)' : diff < 0 ? 'var(--vermelho)' : 'var(--cinza)';
+    return `
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid var(--borda);border-left:4px solid ${queda ? 'var(--vermelho)' : 'var(--amarelo)'};border-radius:10px;padding:10px 14px;margin-top:12px;font-size:13px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:16px;">${queda ? '🔻' : '⬆️'}</span>
+          <div>
+            <div style="font-weight:800;color:var(--texto);text-transform:capitalize;">${diaSemana}, ${data}</div>
+            <div style="color:var(--cinza);font-size:12px;">${fmt(v)} buscas no dia · dia ${i + 1} de ${vals.length}</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:18px;font-weight:800;color:${corDiff};">${anterior !== null ? sinalDiff + diff.toFixed(1).replace('.', ',') + '%' : '—'}</div>
+          <div style="color:var(--cinza);font-size:12px;">${anterior !== null ? 'vs ' + fmt(anterior) + ' buscas do dia anterior' : 'início do período'}</div>
+        </div>
+      </div>`;
+  };
 
   el.innerHTML = `
     <div class="hist-chart-wrap">
@@ -1132,7 +1156,18 @@ function renderHistorico() {
         <span style="color:var(--cinza);">Final: <b style="color:var(--texto);">${fmt(ultimo)}</b></span>
         <span style="color:var(--cinza);">Variação no período: <b style="color:${varPct >= 0 ? 'var(--verde)' : 'var(--vermelho)'}">${sinal}${varPct}%</b></span>
       </div>
+      <div id="histDetalhe"></div>
     </div>`;
+  const pontosSvg = el.querySelectorAll('.hist-pt');
+  pontosSvg.forEach((c, i) => {
+    c.style.cursor = 'pointer';
+    c.addEventListener('click', () => {
+      pontosSvg.forEach(x => { x.setAttribute('stroke', 'none'); x.setAttribute('stroke-width', '0'); });
+      c.setAttribute('stroke', '#0a0a0c');
+      c.setAttribute('stroke-width', '2');
+      $('#histDetalhe').innerHTML = detalhe(parseInt(c.dataset.pt, 10));
+    });
+  });
 }
 /* ---- Trend distribution ---- */
 function renderTrend() {
@@ -1710,6 +1745,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('#btnRelCSV').onclick = exportarCSV;
   $('#btnRelPDF').onclick = gerarPDF;
+  $('#brandLogo').onclick = () => navegar('painel');
   $('#histProduto').addEventListener('change', renderHistorico);
   $('#histPeriodo').addEventListener('change', () => {
     const custom = $('#histPeriodo').value === 'custom';
