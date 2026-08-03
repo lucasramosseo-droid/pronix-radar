@@ -155,12 +155,19 @@
     font: inherit; font-size: 13px; font-weight: 600; padding: 8px 12px; border: 1px solid var(--borda);
     border-radius: 10px; background: var(--superficie); color: var(--texto); max-width: 280px;
   }
+  .hist-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .hist-datas { display: inline-flex; align-items: center; gap: 8px; }
+  .hist-date {
+    font: inherit; font-size: 13px; font-weight: 600; padding: 7px 10px; border: 1px solid var(--borda);
+    border-radius: 10px; background: var(--superficie); color: var(--texto);
+  }
   .hist-chart-wrap { width: 100%; overflow-x: auto; }
-  .hist-chart-wrap svg { width: 100%; min-width: 460px; height: auto; display: block; }
+  .hist-chart-wrap svg { width: 100%; min-width: 560px; height: auto; display: block; }
   .hist-chart-wrap .hist-line { fill: none; stroke: var(--amarelo); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
   .hist-chart-wrap .hist-area { fill: rgba(255, 200, 0, .18); }
   .hist-chart-wrap .hist-grid { stroke: var(--borda); stroke-width: 1; }
-  .hist-chart-wrap .hist-pt { fill: var(--amarelo-escuro); }
+  .hist-chart-wrap .hist-pt { cursor: pointer; transition: r .15s ease, fill .15s ease; }
+  .hist-chart-wrap .hist-pt:hover { r: 7; fill: var(--amarelo-escuro); }
   .hist-chart-wrap text { font-size: 11px; fill: var(--cinza); font-weight: 600; }
 
   /* ===== Botões ===== */
@@ -392,8 +399,21 @@
 
     <div class="panel">
       <div class="panel-head">
-        <h3>Evolução de buscas — últimos 30 dias</h3>
+        <h3>Evolução de buscas</h3>
         <select class="hist-select" id="histProduto" title="Escolha o produto"></select>
+      </div>
+      <div class="hist-controls">
+        <select class="hist-select" id="histPeriodo" title="Período do gráfico">
+          <option value="30">Últimos 30 dias</option>
+          <option value="15">Últimos 15 dias</option>
+          <option value="7">Últimos 7 dias</option>
+          <option value="custom">Período personalizado</option>
+        </select>
+        <span class="hist-datas" id="histDatas" style="display:none;">
+          <input type="date" id="histDataIni" class="hist-date">
+          <span style="color:var(--cinza);">até</span>
+          <input type="date" id="histDataFim" class="hist-date">
+        </span>
       </div>
       <div id="histChart"></div>
     </div>
@@ -1034,37 +1054,77 @@ function renderHistorico() {
   }
   sel.value = dados.produtos.some(p => p.id === atual) ? atual : sel.options[0].value;
   const p = dados.produtos.find(x => x.id === parseInt(sel.value, 10)) || dados.produtos[0];
-  const vals = gerarHistorico(p);
-  const W = 760, H = 240, pad = 34;
+
+  const periodo = $('#histPeriodo').value || '30';
+  let dias = periodo === 'custom' ? 30 : parseInt(periodo, 10);
+  let dtFim = new Date();
+  let dtIni = new Date();
+  if (periodo === 'custom') {
+    const vIni = $('#histDataIni').value;
+    const vFim = $('#histDataFim').value;
+    if (vIni) dtIni = new Date(vIni + 'T00:00:00');
+    if (vFim) dtFim = new Date(vFim + 'T00:00:00');
+    if (dtFim >= dtIni) {
+      dias = Math.round((dtFim - dtIni) / 86400000) + 1;
+      dias = Math.max(2, Math.min(dias, 90));
+    } else { dias = 30; dtIni = new Date(); dtFim = new Date(); dtIni.setDate(dtFim.getDate() - 29); }
+  } else {
+    dtIni.setDate(dtFim.getDate() - (dias - 1));
+  }
+  const pad = (n) => String(n).padStart(2, '0');
+  const fmtDia = (d) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`;
+
+  const vals = gerarHistorico(p, dias);
+  const W = 820, H = 260, padX = 58;
   const max = Math.max(...vals) * 1.12;
   const min = Math.min(...vals) * 0.85;
   const range = (max - min) || 1;
-  const px = i => pad + (i / (vals.length - 1)) * (W - pad * 2);
-  const py = v => H - pad - ((v - min) / range) * (H - pad * 2);
+  const px = i => padX + (i / (vals.length - 1)) * (W - padX * 2);
+  const py = v => H - padX / 2 - ((v - min) / range) * (H - padX);
   const pontos = vals.map((v, i) => px(i).toFixed(1) + ',' + py(v).toFixed(1));
-  const area = 'M' + pontos[0] + ' L' + pontos.join(' L') + ' L' + px(vals.length - 1).toFixed(1) + ',' + (H - pad).toFixed(1) + ' L' + pad + ',' + (H - pad).toFixed(1) + ' Z';
+  const area = 'M' + pontos[0] + ' L' + pontos.join(' L') + ' L' + px(vals.length - 1).toFixed(1) + ',' + (H - padX / 2).toFixed(1) + ' L' + padX + ',' + (H - padX / 2).toFixed(1) + ' Z';
   const gridY = [0, 1, 2, 3, 4].map(i => {
     const v = min + (range * i) / 4;
-    return `<line class="hist-grid" x1="${pad}" y1="${py(v)}" x2="${W - pad}" y2="${py(v)}"/>
-      <text x="${pad - 6}" y="${py(v) + 4}" text-anchor="end">${fmt(Math.round(v))}</text>`;
+    return `<line class="hist-grid" x1="${padX}" y1="${py(v)}" x2="${W - padX}" y2="${py(v)}"/>
+      <text x="${padX - 8}" y="${py(v) + 4}" text-anchor="end">${fmt(Math.round(v))}</text>`;
   }).join('');
   const media = vals.reduce((s, x) => s + x, 0) / vals.length;
   const primeiro = vals[0], ultimo = vals[vals.length - 1];
   const varPct = primeiro ? Math.round(((ultimo - primeiro) / primeiro) * 100) : 0;
   const sinal = varPct >= 0 ? '+' : '';
   const d = dados.produtos.find(x => x.id === p.id);
+
+  const passos = vals.map((v, i) => {
+    const dt = new Date(dtIni);
+    dt.setDate(dtIni.getDate() + i);
+    const data = fmtDia(dt);
+    const anterior = i > 0 ? vals[i - 1] : null;
+    const queda = anterior !== null && v < anterior;
+    const diff = anterior !== null ? ((v - anterior) / anterior) * 100 : 0;
+    const sinalDiff = diff > 0 ? '+' : '';
+    const info = `Dia ${i + 1} (${data}): ${fmt(v)} buscas` +
+      (anterior !== null ? ` · ${sinalDiff}${diff.toFixed(1).replace('.', ',')}% vs dia anterior` : ' · início do período') +
+      (queda ? ' · ⚠ queda' : '');
+    return `<circle class="hist-pt" cx="${px(i)}" cy="${py(v)}" r="${queda ? 4.5 : 3.5}" fill="${queda ? '#dc2626' : 'var(--amarelo-escuro)'}"><title>${info}</title></circle>`;
+  }).join('');
+
+  const rotulosX = [0, Math.floor((vals.length - 1) / 2), vals.length - 1].map(i => {
+    const dt = new Date(dtIni);
+    dt.setDate(dtIni.getDate() + i);
+    return `<text x="${px(i)}" y="${H - padX / 2 + 18}" text-anchor="middle">${fmtDia(dt)}</text>`;
+  }).join('');
+
   el.innerHTML = `
     <div class="hist-chart-wrap">
-      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução de buscas">
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução de buscas" style="max-width:100%;">
         ${gridY}
-        <line class="hist-grid" x1="${pad}" y1="${H - pad}" x2="${W - pad}" y2="${H - pad}"/>
+        <line class="hist-grid" x1="${padX}" y1="${H - padX / 2}" x2="${W - padX}" y2="${H - padX / 2}"/>
         <path class="hist-area" d="${area}"/>
         <path class="hist-line" d="M${pontos.join(' L')}"/>
-        <circle class="hist-pt" cx="${px(0)}" cy="${py(vals[0])}" r="4"><title>Dia 1: ${fmt(vals[0])} buscas</title></circle>
-        <circle class="hist-pt" cx="${px(vals.length - 1)}" cy="${py(vals[vals.length - 1])}" r="4"><title>Dia 30: ${fmt(vals[vals.length - 1])} buscas</title></circle>
-        <text x="${pad}" y="${H - pad + 16}">Dia 1</text>
-        <text x="${W - pad}" y="${H - pad + 16}" text-anchor="end">Dia 30</text>
-        <text x="${W - pad}" y="18" text-anchor="end">${esc(d ? d.nome : '')}</text>
+        ${passos}
+        ${rotulosX}
+        <text x="${W - padX}" y="18" text-anchor="end" style="fill:var(--texto);font-weight:800;font-size:12px;">${esc(d ? d.nome : '')}</text>
+        <text x="${padX}" y="18" text-anchor="start">${fmtDia(dtIni)} — ${fmtDia(dtFim)} · ${dias} dias</text>
       </svg>
       <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:13px;">
         <span style="color:var(--cinza);">Média diária: <b style="color:var(--texto);">${fmt(Math.round(media))} buscas</b></span>
@@ -1651,6 +1711,20 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#btnRelCSV').onclick = exportarCSV;
   $('#btnRelPDF').onclick = gerarPDF;
   $('#histProduto').addEventListener('change', renderHistorico);
+  $('#histPeriodo').addEventListener('change', () => {
+    const custom = $('#histPeriodo').value === 'custom';
+    $('#histDatas').style.display = custom ? 'inline-flex' : 'none';
+    if (custom) {
+      const fim = new Date();
+      const ini = new Date();
+      ini.setDate(fim.getDate() - 29);
+      if (!$('#histDataIni').value) $('#histDataIni').value = ini.toISOString().slice(0, 10);
+      if (!$('#histDataFim').value) $('#histDataFim').value = fim.toISOString().slice(0, 10);
+    }
+    renderHistorico();
+  });
+  $('#histDataIni').addEventListener('change', renderHistorico);
+  $('#histDataFim').addEventListener('change', renderHistorico);
   $('#alertaToggle').onclick = alternarAlertas;
   checarAlertas();
   setInterval(checarAlertas, 5 * 60 * 1000);
