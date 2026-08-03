@@ -238,23 +238,23 @@
   .prod-card .thumb .sazonal {
     position: absolute; top: 10px; right: 10px; font-size: 11px; font-weight: 800; padding: 4px 9px; border-radius: 999px;
     color: var(--texto); background: var(--amarelo); border: 1px solid rgba(0,0,0,.12);
-    display: inline-flex; align-items: center; gap: 5px;
+    display: inline-flex; align-items: center; gap: 5px; text-shadow: 0 1px 2px rgba(0,0,0,.35);
   }
   [data-theme="dark"] .prod-card .thumb .sazonal { color: #1b1b1b; }
-  .saz-verao { background: linear-gradient(135deg, #ff3d2e, #ff7a00) !important; color: #ffd000 !important; border: 1px solid rgba(255,255,255,.5) !important; animation: saz-calor 1.6s ease-in-out infinite; box-shadow: 0 0 12px rgba(255,60,0,.55); }
-  .saz-inverno { background: linear-gradient(135deg, #38bdf8, #0284c7) !important; color: #ffd000 !important; border: 1px solid rgba(255,255,255,.5) !important; animation: saz-gelo 2.2s ease-in-out infinite; }
-  .saz-blackfriday { background: linear-gradient(135deg, #0a0a0a, #262626) !important; color: #ffd000 !important; border: 1px solid #ffd000 !important; animation: saz-blackfriday 0.9s linear infinite; box-shadow: 0 0 14px rgba(255,200,0,.65); }
-  .saz-diamae { background: linear-gradient(135deg, #ec4899, #d946ef) !important; color: #ffd000 !important; border: 1px solid rgba(255,255,255,.5) !important; animation: saz-coracao 1.4s ease-in-out infinite; }
-  .saz-diapais { background: linear-gradient(135deg, #2563eb, #06b6d4) !important; color: #ffd000 !important; border: 1px solid rgba(255,255,255,.5) !important; animation: saz-gravata 3s ease-in-out infinite; }
-  .saz-natal { background: linear-gradient(135deg, #dc2626, #16a34a) !important; color: #ffd000 !important; border: 1px solid rgba(255,255,255,.5) !important; animation: saz-natal 1s steps(2, jump-none) infinite; }
-  .saz-voltaaulas { background: linear-gradient(135deg, #f97316, #b45309) !important; color: #ffd000 !important; border: 1px solid rgba(0,0,0,.25) !important; animation: saz-pulo 1.2s ease-in-out infinite; }
-  .saz-copadomundo { background: linear-gradient(135deg, #15803d, #a16207) !important; color: #ffd000 !important; border: 1px solid rgba(0,0,0,.25) !important; animation: saz-copa 1.4s ease-in-out infinite; }
-  @keyframes saz-calor { 0%, 100% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 10px rgba(255,60,0,.45); } 50% { transform: scale(1.07); filter: brightness(1.3); box-shadow: 0 0 20px rgba(255,80,0,.85); } }
-  @keyframes saz-gelo { 0%, 100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(-2px) rotate(-2deg); filter: brightness(1.15); } 75% { transform: translateY(1px) rotate(2deg); filter: brightness(1.3); } }
-  @keyframes saz-blackfriday { 0%, 100% { transform: translateX(0); box-shadow: 0 0 8px rgba(255,200,0,.5); } 20% { transform: translateX(-1.5px); } 40% { transform: translateX(1.5px); box-shadow: 0 0 18px rgba(255,200,0,.95); } 60% { transform: translateX(-1px); } 80% { transform: translateX(1px); } }
-  @keyframes saz-coracao { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.12); } 45% { transform: scale(1.03); } }
-  @keyframes saz-gravata { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-5deg); } 75% { transform: rotate(5deg); } }
-  @keyframes saz-natal { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.5); } }
+  .saz-verao { background: linear-gradient(135deg, #e63946, #ff7b00) !important; color: #ffd000 !important; border: 1px solid rgba(255,255,255,.35) !important; animation: saz-calor 1.6s ease-in-out infinite; box-shadow: 0 0 12px rgba(255,60,0,.45); }
+  .saz-inverno { background: linear-gradient(135deg, #0ea5e9, #0369a1) !important; color: #ffd000 !important; border: 1px solid rgba(255,255,255,.35) !important; animation: saz-gelo 2.2s ease-in-out infinite; }
+  .saz-blackfriday { background: linear-gradient(135deg, #0a0a0a, #262626) !important; color: #ffd000 !important; border: 1px solid #ffd000 !important; animation: saz-blackfriday 0.9s linear infinite; box-shadow: 0 0 14px rgba(255,200,0,.55); }
+  .saz-diamae { background: linear-gradient(135deg, #f43f5e, #be185d) !important; color: #ffd000 !important; border: 1px solid rgba(255,255,255,.35) !important; animation: saz-coracao 1.4s ease-in-out infinite; }
+  .saz-diapais { background: linear-gradient(135deg, #2563eb, #1e3a8a) !important; color: #ffd000 !important; border: 1px solid rgba(255,255,255,.35) !important; animation: saz-gravata 3s ease-in-out infinite; }
+  .saz-natal { background: linear-gradient(135deg, #dc2626, #15803d) !important; color: #ffd000 !important; border: 1px solid rgba(255,255,255,.35) !important; animation: saz-natal 1s steps(2, jump-none) infinite; }
+  .saz-voltaaulas { background: linear-gradient(135deg, #ea580c, #c2410c) !important; color: #ffd000 !important; border: 1px solid rgba(0,0,0,.25) !important; animation: saz-pulo 1.2s ease-in-out infinite; }
+  .saz-copadomundo { background: linear-gradient(135deg, #15803d, #b45309) !important; color: #ffd000 !important; border: 1px solid rgba(0,0,0,.25) !important; animation: saz-copa 1.4s ease-in-out infinite; }
+  @keyframes saz-calor { 0%, 100% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 10px rgba(255,60,0,.35); } 50% { transform: scale(1.07); filter: brightness(1.15); box-shadow: 0 0 18px rgba(255,80,0,.6); } }
+  @keyframes saz-gelo { 0%, 100% { transform: translateY(0) rotate(0); } 25% { transform: translateY(-2px) rotate(-2deg); filter: brightness(1.1); } 75% { transform: translateY(1px) rotate(2deg); filter: brightness(1.2); } }
+  @keyframes saz-blackfriday { 0%, 100% { transform: translateX(0); box-shadow: 0 0 8px rgba(255,200,0,.4); } 20% { transform: translateX(-1.5px); } 40% { transform: translateX(1.5px); box-shadow: 0 0 18px rgba(255,200,0,.8); } 60% { transform: translateX(-1px); } 80% { transform: translateX(1px); } }
+  @keyframes saz-coracao { 0%, 100% { transform: scale(1); } 25% { transform: scale(1.1); } 45% { transform: scale(1.02); } }
+  @keyframes saz-gravata { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+  @keyframes saz-natal { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.25); } }
   @keyframes saz-pulo { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-3px); } 70% { transform: translateY(1px); } }
   @keyframes saz-copa { 0%, 100% { transform: rotate(0) scale(1); } 30% { transform: rotate(-6deg) scale(1.05); } 70% { transform: rotate(6deg) scale(1.02); } }
   .btn-foco {
