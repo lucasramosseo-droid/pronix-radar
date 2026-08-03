@@ -74,7 +74,8 @@
   .nav button.active { background: var(--amarelo); color: #0a0a0c; box-shadow: 0 2px 10px rgba(255,200,0,.35); }
   .dark-toggle {
     background: rgba(255,255,255,.08); color: #e5e5e9; border: 1px solid rgba(255,255,255,.25);
-    padding: 8px 14px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
+    width: 38px; height: 38px; padding: 0; border-radius: 50%; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; transition: all .2s;
   }
   .dark-toggle:hover { background: rgba(255,200,0,.15); }
   .dark-toggle.on { background: var(--amarelo); color: #0a0a0c; border-color: var(--amarelo); }
@@ -379,8 +380,8 @@
     <button data-view="produtos">Produtos</button>
     <button data-view="oportunidades">Oportunidades do dia</button>
   </nav>
-  <button class="dark-toggle" id="darkToggle" title="Alternar modo escuro">🌙 Escuro</button>
-  <button class="dark-toggle" id="alertaToggle" title="Receber alerta quando um produto subir nas buscas">🔔 Alertas</button>
+  <button class="dark-toggle" id="darkToggle" title="Alternar modo escuro">🌙</button>
+  <button class="dark-toggle" id="alertaToggle" title="Receber alerta quando um produto subir nas buscas">🔔</button>
 </header>
 
 <main class="container">
@@ -1755,7 +1756,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function aplicarTema(escuro) {
     document.documentElement.setAttribute('data-theme', escuro ? 'dark' : 'light');
     $('#darkToggle').classList.toggle('on', escuro);
-    $('#darkToggle').textContent = escuro ? '☀️ Claro' : '🌙 Escuro';
+    $('#darkToggle').textContent = escuro ? '☀️' : '🌙';
     try { localStorage.setItem(THEME_KEY, escuro ? 'dark' : 'light'); } catch (e) {}
   }
   $('#darkToggle').onclick = () => {
