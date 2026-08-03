@@ -174,9 +174,10 @@
   .btn {
     display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer;
     font: inherit; font-weight: 700; border-radius: 12px; padding: 12px 18px; transition: all .2s;
-    outline: none;
+    outline: none; box-shadow: none; -webkit-appearance: none; appearance: none;
   }
-  .btn:focus-visible { outline: 2px solid var(--amarelo); outline-offset: 2px; }
+  .btn:focus { outline: none; box-shadow: none; }
+  .btn:focus-visible { outline: none; box-shadow: none; }
   .btn:active { transform: translateY(0); }
   .btn-amarelo { background: linear-gradient(135deg, var(--amarelo), var(--amarelo-escuro)); color: #0a0a0c; box-shadow: 0 4px 12px rgba(255,200,0,.3); }
   .btn-amarelo:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(255,200,0,.45); }
