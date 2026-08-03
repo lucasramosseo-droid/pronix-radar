@@ -72,12 +72,6 @@
   }
   .nav button:hover { background: rgba(255,200,0,.12); color: #fff; }
   .nav button.active { background: var(--amarelo); color: #0a0a0c; box-shadow: 0 2px 10px rgba(255,200,0,.35); }
-  .admin-toggle {
-    background: rgba(255,255,255,.08); color: #e5e5e9; border: 1px solid rgba(255,255,255,.25);
-    padding: 8px 14px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
-  }
-  .admin-toggle:hover { background: rgba(255,200,0,.15); }
-  .admin-toggle.on { background: var(--amarelo); color: #0a0a0c; border-color: var(--amarelo); }
   .dark-toggle {
     background: rgba(255,255,255,.08); color: #e5e5e9; border: 1px solid rgba(255,255,255,.25);
     padding: 8px 14px; border-radius: 10px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s;
@@ -387,7 +381,6 @@
   </nav>
   <button class="dark-toggle" id="darkToggle" title="Alternar modo escuro">🌙 Escuro</button>
   <button class="dark-toggle" id="alertaToggle" title="Receber alerta quando um produto subir nas buscas">🔔 Alertas</button>
-  <button class="admin-toggle" id="adminToggle" title="Mostrar/ocultar botões de edição e exclusão">Modo edição</button>
 </header>
 
 <main class="container">
@@ -480,7 +473,7 @@
       <select id="fConc"><option value="">Toda concorrência</option><option value="baixa">Baixa</option><option value="media">Média</option><option value="alta">Alta</option></select>
       <select id="fFoco"><option value="">Todos</option><option value="foco">⭐ Meus focos</option></select>
       <select id="fSort"><option value="buscas">Ordenar: buscas</option><option value="oportunidade">Ordenar: oportunidade</option><option value="preco">Ordenar: preço</option></select>
-      <button class="btn btn-azul btn-pequeno" id="btnAdd" style="display:none;">+ Novo produto</button>
+      <button class="btn btn-azul btn-pequeno" id="btnAdd">+ Novo produto</button>
     </div>
     <div class="prod-grid" id="prodGrid"></div>
     <div class="vazio" id="semResultados" style="display:none;">Nenhum produto encontrado com esses filtros.</div>
@@ -695,7 +688,6 @@ const IMGS_BASE = {
    ========================================================= */
 const LS_KEY = 'mlpesquisas_dados_v1';
 let dados = null;
-let admin = false;
 let editandoId = null;
 
 function carregarDados() {
@@ -1445,9 +1437,8 @@ function cardProduto(p, compacto) {
           <button class="btn btn-amarelo btn-pequeno analisar">Analisar com IA</button>
           <button class="btn btn-cinza btn-pequeno btn-nota" data-nota="${p.id}">${p.nota ? '📝 Nota' : '📝'}</button>
           <a class="btn btn-azul btn-pequeno" href="${esc(p.ml)}" target="_blank" rel="noopener">Ver no ML</a>
-          ${admin ? `
-            <button class="btn btn-cinza btn-pequeno admin-btn editar" title="Editar">✏️</button>
-            <button class="btn btn-perigo admin-btn excluir" title="Excluir">🗑️</button>` : ''}
+          <button class="btn btn-cinza btn-pequeno admin-btn editar" title="Editar">✏️</button>
+          <button class="btn btn-perigo admin-btn excluir" title="Excluir">🗑️</button>
         </div>`}
         <div class="metrics" style="display:none"></div>
       </div>
@@ -1759,14 +1750,6 @@ document.addEventListener('DOMContentLoaded', () => {
   renderTudo();
 
   document.querySelectorAll('.nav button').forEach(b => b.onclick = () => navegar(b.dataset.view));
-
-  $('#adminToggle').onclick = () => {
-    admin = !admin;
-    $('#adminToggle').classList.toggle('on', admin);
-    $('#btnAdd').style.display = admin ? 'inline-flex' : 'none';
-    renderTudo();
-    toast(admin ? 'Modo edição ativado.' : 'Modo edição desativado.');
-  };
 
   const THEME_KEY = 'mlp_tema';
   function aplicarTema(escuro) {
