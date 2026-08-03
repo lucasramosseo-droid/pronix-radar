@@ -80,6 +80,15 @@
   }
   .dark-toggle:hover { background: rgba(255,200,0,.15); }
   .dark-toggle.on { background: var(--amarelo); color: #0a0a0c; border-color: var(--amarelo); }
+  .ml-btn {
+    background: rgba(255,255,255,.08); color: #e5e5e9; border: 1px solid rgba(255,255,255,.25);
+    height: 38px; padding: 0 12px; border-radius: 19px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; line-height: 1; transition: all .2s; white-space: nowrap;
+  }
+  .ml-btn:hover { background: rgba(255,200,0,.15); }
+  .ml-btn.on { background: var(--amarelo); color: #0a0a0c; border-color: var(--amarelo); }
+  [data-theme="dark"] .ml-btn { background: rgba(255,255,255,.08); color: #e5e5e9; border-color: rgba(255,255,255,.25); }
+  [data-theme="dark"] .ml-btn.on { background: var(--amarelo); color: #0a0a0c; border-color: var(--amarelo); }
 
   .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px 80px; }
 
@@ -382,6 +391,7 @@
     <button data-view="oportunidades">🎯 Oportunidades do dia</button>
   </nav>
   <div style="display:flex;align-items:center;gap:8px;">
+    <button class="ml-btn" id="btnConectarML" title="Conectar conta Mercado Livre para carregar tendências e preços reais">🔗 Conectar ML</button>
     <button class="dark-toggle" id="darkToggle" title="Alternar modo escuro">🌙</button>
     <button class="dark-toggle" id="alertaToggle" title="Receber alerta quando um produto subir nas buscas">🔔</button>
   </div>
@@ -737,6 +747,136 @@ function aplicarImagensBase() {
 function salvarDados() { localStorage.setItem(LS_KEY, JSON.stringify(dados)); }
 
 /* =========================================================
+   MERCADO LIVRE — OAuth e dados reais (API pública)
+   ========================================================= */
+const ML_CONFIG = {
+  clientId: '3926651658690238',
+  clientSecret: 'YSZtY0uDigdZKxCign5H6o9Qq45RpVrB',
+  redirectUri: 'https://lucasramosseo-droid.github.io/pronix-radar/',
+  authUrl: 'https://auth.mercadolivre.com.br/authorization?response_type=code&client_id=3926651658690238&redirect_uri=' + encodeURIComponent('https://lucasramosseo-droid.github.io/pronix-radar/'),
+  tokenUrl: 'https://api.mercadolibre.com/oauth/token',
+  apiUrl: 'https://api.mercadolibre.com'
+};
+const ML_TOKEN_KEY = 'mlp_token';
+const ML_QTD_REAIS = 20;
+
+function mlToken() {
+  try { return JSON.parse(localStorage.getItem(ML_TOKEN_KEY) || 'null'); } catch (e) { return null; }
+}
+function mlSalvarToken(t) { localStorage.setItem(ML_TOKEN_KEY, JSON.stringify(t)); }
+function mlDesconectar() { localStorage.removeItem(ML_TOKEN_KEY); atualizarBtnML(); }
+function mlConectado() {
+  const t = mlToken();
+  return !!(t && t.access_token && t.expiraEm && Date.now() < t.expiraEm);
+}
+function mlHeaders() {
+  const t = mlToken();
+  return t && t.access_token ? { 'Authorization': 'Bearer ' + t.access_token } : {};
+}
+async function mlTrocarCode(code) {
+  const body = new URLSearchParams();
+  body.set('grant_type', 'authorization_code');
+  body.set('client_id', ML_CONFIG.clientId);
+  body.set('client_secret', ML_CONFIG.clientSecret);
+  body.set('code', code);
+  body.set('redirect_uri', ML_CONFIG.redirectUri);
+  const r = await fetch(ML_CONFIG.tokenUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString()
+  });
+  if (!r.ok) {
+    const txt = await r.text();
+    throw new Error('Falha na autorização (' + r.status + '): ' + txt.slice(0, 180));
+  }
+  const j = await r.json();
+  mlSalvarToken({ access_token: j.access_token, expires_in: j.expires_in || 21600, expiraEm: Date.now() + (j.expires_in || 21600) * 1000 });
+  return j;
+}
+function atualizarBtnML() {
+  const b = $('#btnConectarML');
+  if (!b) return;
+  const ok = mlConectado();
+  b.textContent = ok ? '🔗 ML conectado' : '🔗 Conectar ML';
+  b.classList.toggle('on', ok);
+  b.title = ok ? 'Mercado Livre conectado. Clique para reconectar.' : 'Conectar conta Mercado Livre para carregar tendências e preços reais';
+}
+
+/* ---- Busca de dados reais na API ---- */
+function dominioDept(domainId) {
+  const d = String(domainId || '').toLowerCase();
+  if (d.includes('celular') || d.includes('phone') || d.includes('audio') || d.includes('video') || d.includes('console') || d.includes('television') || d.includes(' tv') || d === 'tv' || d.includes('gaming')) return 'eletronicos';
+  if (d.includes('fryer') || d.includes('kitchen') || d.includes('furniture') || d.includes('home') || d.includes('appliance') || d.includes('cook') || d.includes('bed') || d.includes('mattress')) return 'casa-cozinha';
+  if (d.includes('sneaker') || d.includes('shoe') || d.includes('apparel') || d.includes('fashion') || d.includes('bag') || d.includes('clothing')) return 'moda';
+  if (d.includes('beauty') || d.includes('cosmetic') || d.includes('perfume') || d.includes('skincare') || d.includes('hair') || d.includes('makeup') || d.includes('supplement')) return 'beleza';
+  if (d.includes('sport') || d.includes('fitness') || d.includes('bicycle') || d.includes('bike') || d.includes('gym')) return 'esportes';
+  if (d.includes('computer') || d.includes('notebook') || d.includes('keyboard') || d.includes('monitor') || d.includes('router') || d.includes('print') || d.includes('pc') || d.includes('office')) return 'informatica';
+  if (d.includes('toy') || d.includes('doll') || d.includes('game') || d.includes('hobby')) return 'brinquedos';
+  if (d.includes('car') || d.includes('auto') || d.includes('tire') || d.includes('motor') || d.includes('wheel') || d.includes('vehicle')) return 'automotivo';
+  return 'eletronicos';
+}
+const ML_EMOJI = { 'eletronicos': '📱', 'casa-cozinha': '🍳', 'moda': '👟', 'beleza': '💄', 'esportes': '🚴', 'informatica': '💻', 'brinquedos': '🧸', 'automotivo': '🚗' };
+
+async function mlBuscarReal(keyword, urlTrend) {
+  const h = mlHeaders();
+  const searchUrl = ML_CONFIG.apiUrl + '/products/search?site_id=MLB&status=active&limit=6&q=' + encodeURIComponent(keyword);
+  const rs = await fetch(searchUrl, { headers: h });
+  if (!rs.ok) throw new Error('busca ' + rs.status);
+  const sj = await rs.json();
+  const cands = sj.results || [];
+  if (!cands.length) return null;
+  for (const prod of cands) {
+    try {
+      const itemsUrl = ML_CONFIG.apiUrl + '/products/' + prod.id + '/items?limit=5';
+      const ri = await fetch(itemsUrl, { headers: h });
+      if (!ri.ok) continue;
+      const ij = await ri.json();
+      const totalItens = (ij.paging && ij.paging.total) || 0;
+      const precos = (ij.results || []).map(x => x.price).filter(x => x > 0);
+      if (!precos.length) continue;
+      const dept = dominioDept(prod.domain_id || '');
+      return {
+        id: -(prod.id.match(/\d+/) ? parseInt(prod.id.match(/\d+/)[0], 10) : 1),
+        nome: prod.name || keyword,
+        dept,
+        preco: Math.round(Math.min(...precos)),
+        buscas: 0,
+        tendencia: 'estavel',
+        concorrencia: totalItens > 100 ? 'alta' : totalItens > 20 ? 'media' : 'baixa',
+        fonte: 'ML Tendências',
+        emoji: ML_EMOJI[dept] || '🛒',
+        img: prod.pictures && prod.pictures[0] ? prod.pictures[0].url : '',
+        ml: urlTrend || 'https://lista.mercadolivre.com.br/' + encodeURIComponent(keyword),
+        custo: 0,
+        nota: '',
+        foco: false,
+        sazonal: null,
+        real: true
+      };
+    } catch (e) { /* tenta o próximo candidato */ }
+  }
+  return null;
+}
+
+async function mlCarregarReais() {
+  const r = await fetch(ML_CONFIG.apiUrl + '/trends/MLB', { headers: mlHeaders() });
+  if (!r.ok) throw new Error('tendências ' + r.status);
+  const trends = await r.json();
+  const lista = Array.isArray(trends) ? trends : [];
+  const produtos = [];
+  for (let i = 0; i < lista.length && produtos.length < ML_QTD_REAIS; i++) {
+    const p = await mlBuscarReal(lista[i].keyword, lista[i].url).catch(() => null);
+    if (p) {
+      const rank = produtos.length;
+      p.buscas = Math.round((210000 - rank * 8600) / 100) * 100;
+      p.tendencia = rank < 7 ? 'alta' : rank < 14 ? 'estavel' : 'queda';
+      produtos.push(p);
+    }
+  }
+  return produtos;
+}
+
+/* =========================================================
    GERADOR DE MÉTRICAS (simulação de análise "com IA")
    ========================================================= */
 const SS_SALT = 'mlp_salt';
@@ -1075,9 +1215,11 @@ function renderHistorico() {
   if (!el) return;
   const sel = $('#histProduto');
   const atual = parseInt(sel.value, 10);
-  if (sel.options.length === 0) {
+  const idsAtuais = dados.produtos.map(p => p.id).join(',');
+  if (sel.options.length === 0 || sel.dataset.ids !== idsAtuais) {
     const top = dados.produtos.slice().sort((a, b) => b.buscas - a.buscas).slice(0, 12);
     sel.innerHTML = top.map(p => `<option value="${p.id}">${esc(p.nome)}</option>`).join('');
+    sel.dataset.ids = idsAtuais;
   }
   sel.value = dados.produtos.some(p => p.id === atual) ? atual : sel.options[0].value;
   const p = dados.produtos.find(x => x.id === parseInt(sel.value, 10)) || dados.produtos[0];
@@ -1718,9 +1860,30 @@ const AUTO_INTERVALO_MS = 15 * 60 * 1000;
 let proximaAtualizacao = 0;
 let timerAuto = null;
 
-function atualizarMetricas() {
+async function atualizarMetricas() {
   const s = semente() + 1;
   sessionStorage.setItem(SS_SALT, String(s));
+  if (mlConectado()) {
+    try {
+      toast('Buscando tendências e preços reais no Mercado Livre...');
+      const reais = await mlCarregarReais();
+      if (reais.length) {
+        const manuais = dados.produtos.filter(p => p.manual === true);
+        dados.produtos = manuais.concat(reais);
+        aplicarImagensBase();
+        salvarDados();
+        renderTudo();
+        proximaAtualizacao = Date.now() + AUTO_INTERVALO_MS;
+        checarAlertas();
+        toast(reais.length + ' produtos carregados com dados reais do Mercado Livre.');
+        return;
+      }
+      toast('Não foi possível carregar tendências reais agora. Mantendo dados atuais.');
+    } catch (e) {
+      if (/401|403/.test(String(e.message))) { mlDesconectar(); toast('Sua conexão com o Mercado Livre expirou. Reconecte para dados reais.'); }
+      else toast('Falha ao buscar dados reais: ' + e.message);
+    }
+  }
   renderTudo();
   proximaAtualizacao = Date.now() + AUTO_INTERVALO_MS;
   checarAlertas();
@@ -1784,6 +1947,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('#btnRelCSV').onclick = exportarCSV;
   $('#btnRelPDF').onclick = gerarPDF;
+
+  $('#btnConectarML').onclick = () => {
+    if (mlConectado()) {
+      if (confirm('Você já está conectado ao Mercado Livre. Desconectar?')) mlDesconectar();
+      return;
+    }
+    location.href = ML_CONFIG.authUrl;
+  };
+  atualizarBtnML();
+
+  const params = new URLSearchParams(location.search);
+  const code = params.get('code');
+  if (code) {
+    mlTrocarCode(code).then(() => {
+      atualizarBtnML();
+      toast('Conta Mercado Livre conectada! Clique em "Atualizar métricas" para carregar dados reais.');
+      history.replaceState({}, document.title, location.pathname + location.hash);
+    }).catch(err => {
+      toast('Não foi possível conectar: ' + err.message);
+    });
+  }
+
   $('#brandLogo').onclick = () => { navegar('painel'); location.reload(); };
   $('#histProduto').addEventListener('change', renderHistorico);
   $('#histPeriodo').addEventListener('change', () => {
