@@ -52,6 +52,13 @@ Os dados reais são atualizados automaticamente, sem intervenção manual:
 
 Abra `index.html` em qualquer navegador (ou o painel publicado). Não requer instalação. Funciona online (para dados reais via proxy) e offline (estimativas locais).
 
+## Experiência do painel
+
+- **Status de conexão**: chip no cabeçalho mostra se o proxy está conectado ao Mercado Livre (verde = conectado, vermelho = offline).
+- **Selo de atualização**: no Painel, um selo informa há quanto tempo os dados reais foram buscados no ML pela última vez.
+- **Layout mobile**: em telas até 768px, o painel ganha um layout dedicado com navegação fixa inferior (bottom nav) e cards em coluna, otimizado para uso no celular.
+- **Carregamento**: skeleton animado é exibido enquanto os dados reais são buscados.
+
 ## Documentação complementar
 
 - `respostas-time-ti.md` — respostas para a submissão ao time de TI.

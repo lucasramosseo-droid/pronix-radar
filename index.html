@@ -90,6 +90,34 @@
   [data-theme="dark"] .ml-btn { background: rgba(255,255,255,.08); color: #e5e5e9; border-color: rgba(255,255,255,.25); }
   [data-theme="dark"] .ml-btn.on { background: var(--amarelo); color: #0a0a0c; border-color: var(--amarelo); }
 
+  /* ===== Status da conexão ML ===== */
+  .ml-status {
+    display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 12px;
+    border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.25);
+    color: #e5e5e9; font-size: 12px; font-weight: 600; white-space: nowrap;
+  }
+  .ml-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #a7a7af; flex-shrink: 0; }
+  .ml-status.ok .ml-status-dot { background: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,.6); }
+  .ml-status.no .ml-status-dot { background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,.6); }
+  .ml-status.check .ml-status-dot { background: var(--amarelo); animation: pulse 1s infinite; }
+
+  /* ===== Selo de última atualização ===== */
+  .atual-selo {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 8px;
+    font-size: 12px; font-weight: 600; color: var(--cinza);
+    background: var(--superficie); border: 1px solid var(--borda); border-radius: 999px; padding: 5px 12px;
+  }
+  .atual-selo .aso-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--verde); flex-shrink: 0; }
+
+  /* ===== Skeleton de carregamento ===== */
+  .sk { position: relative; overflow: hidden; background: var(--superficie-2); border-radius: 12px; }
+  .sk::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent); animation: sk-shine 1.3s infinite; }
+  [data-theme="dark"] .sk::after { background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent); }
+  @keyframes sk-shine { 100% { transform: translateX(100%); } }
+  .sk-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 26px; }
+  .sk-card { height: 96px; }
+  .sk-panel { height: 200px; margin-bottom: 26px; border-radius: 16px; }
+
   .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px 80px; }
 
   /* ===== Seções ===== */
@@ -372,6 +400,73 @@
     body > *:not(#reportePrint) { display: none !important; }
     #reportePrint { display: block !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
+
+  /* ===== LAYOUT MOBILE (<= 768px) ===== */
+  @media (max-width: 768px) {
+    body { padding-bottom: 74px; }
+    .topbar { padding: 10px 14px; gap: 10px; }
+    .brand .logo img { height: 30px; }
+    .brand .logo { height: 30px; }
+    .brand h1 { font-size: 16px; }
+    .brand span { font-size: 10px; }
+    .topbar .nav { display: none; }
+    .ml-status { height: 26px; padding: 0 9px; font-size: 11px; }
+    .container { padding: 18px 12px 30px; }
+    .view-title h2 { font-size: 21px; }
+    .view-title p { font-size: 13px; }
+    .cards { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 18px; }
+    .card { padding: 14px; border-radius: 14px; }
+    .card .value { font-size: 21px; }
+    .panel { padding: 16px; border-radius: 14px; margin-bottom: 16px; }
+    .panel-head h3 { font-size: 16px; }
+    .pie-chart { width: 170px; height: 170px; }
+    .prod-grid, .trend-grid, .dept-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .prod-card .thumb { height: 100px; font-size: 42px; }
+    .prod-card .body { padding: 12px; gap: 8px; }
+    .prod-card .nome { font-size: 13px; min-height: 36px; }
+    .prod-card .preco { font-size: 17px; }
+    .info-grid { gap: 6px; }
+    .info-item { padding: 6px 8px; }
+    .info-item .v { font-size: 12px; }
+    .info-item .l { font-size: 9px; }
+    .hist-chart-wrap svg { min-width: 420px; }
+    .dept-card .thumb { height: 96px; font-size: 44px; }
+    .dept-card .thumb .badge { width: 32px; height: 32px; font-size: 16px; left: 10px; bottom: 8px; border-radius: 9px; }
+    .dept-card .body { padding: 10px 12px; }
+    .dept-card h4 { font-size: 14px; }
+    .dept-card .desc { font-size: 12px; }
+    .view-title { margin: 4px 0 14px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .modal { padding: 20px; }
+    .hist-controls { gap: 8px; }
+    .hist-select { max-width: 100%; flex: 1; }
+    .atual-selo { font-size: 11px; }
+
+    /* Bottom nav fixa (mobile) */
+    .mnav {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 80;
+      display: flex; justify-content: space-around; align-items: stretch;
+      background: rgba(10,10,12,.97); border-top: 2px solid var(--amarelo);
+      padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+      box-shadow: 0 -6px 20px rgba(10,10,12,.4); backdrop-filter: blur(8px);
+    }
+    .mnav button {
+      flex: 1; background: none; border: none; color: #c9c9cf; font: inherit;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 6px 2px; border-radius: 10px; cursor: pointer;
+      font-size: 10px; font-weight: 700; line-height: 1.1;
+    }
+    .mnav button .mi { font-size: 19px; line-height: 1; }
+    .mnav button.active { color: var(--amarelo); }
+  }
+
+  @media (max-width: 420px) {
+    .cards { grid-template-columns: repeat(2, 1fr); }
+    .prod-grid, .trend-grid, .dept-grid { grid-template-columns: 1fr; }
+    .ml-status { display: none; }
+    .brand h1 { font-size: 15px; }
+    .dark-toggle { width: 34px; height: 34px; }
+  }
 </style>
 </head>
 <body>
@@ -391,10 +486,19 @@
     <button data-view="oportunidades">🎯 Oportunidades do dia</button>
   </nav>
   <div style="display:flex;align-items:center;gap:8px;">
+    <span class="ml-status" id="mlStatusChip" title="Status da conexão com o Mercado Livre"><span class="ml-status-dot" id="mlStatusDot"></span><span id="mlStatusText">verificando...</span></span>
     <button class="dark-toggle" id="darkToggle" title="Alternar modo escuro">🌙</button>
     <button class="dark-toggle" id="alertaToggle" title="Receber alerta quando um produto subir nas buscas">🔔</button>
   </div>
 </header>
+
+<!-- Navegação mobile (fixa embaixo) -->
+<nav class="mnav" aria-label="Navegação principal">
+  <button data-view="painel" class="active"><span class="mi">📊</span><span>Painel</span></button>
+  <button data-view="departamentos"><span class="mi">🗂️</span><span>Deptos</span></button>
+  <button data-view="produtos"><span class="mi">📦</span><span>Produtos</span></button>
+  <button data-view="oportunidades"><span class="mi">🎯</span><span>Oportun.</span></button>
+</nav>
 
 <main class="container">
 
@@ -404,7 +508,8 @@
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
         <div>
           <h2>Painel de Tendências</h2>
-          <p>Visão geral dos produtos mais procurados, com estimativas baseadas em tendências públicas de busca do Mercado Livre.</p>
+          <p>Visão geral dos produtos mais procurados, com dados reais do Mercado Livre.</p>
+          <span class="atual-selo" id="atualSelo" style="display:none;"></span>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn btn-cinza btn-pequeno" id="btnRelCSV" title="Baixar planilha CSV dos produtos"><svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" fill="#217346"/><path d="M6 6l8 8M14 6l-8 8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg> Baixar CSV</button>
@@ -414,8 +519,19 @@
     </div>
 
     <div class="aviso-atual">
-      Os dados abaixo são um retrato recente das tendências públicas de busca. Clique em <b>"Atualizar métricas"</b> para gerar uma nova análise das tendências. As métricas de IA de cada produto aparecem apenas quando você clica em <b>"Analisar com IA"</b> e se fecham ao atualizar a página.
+      Dados reais do Mercado Livre: preços, avaliações e tendências coletados pela API oficial e atualizados automaticamente. Se algo falhar, os valores estimados locais são usados como reserva.
     </div>
+
+    <div id="loadSkeleton" style="display:none;">
+      <div class="sk-cards">
+        <div class="sk sk-card"></div><div class="sk sk-card"></div>
+        <div class="sk sk-card"></div><div class="sk sk-card"></div>
+      </div>
+      <div class="sk sk-panel"></div>
+      <div class="sk sk-panel"></div>
+    </div>
+
+    <div id="conteudoPainel">
 
     <div class="cards" id="statCards"></div>
 
@@ -462,6 +578,7 @@
         <p style="font-size:13px;color:var(--cinza);">Clique em um produto para ver os detalhes na aba Produtos.</p>
       </div>
       <div class="prod-grid" id="topProdutos"></div>
+    </div>
     </div>
   </section>
 
@@ -515,7 +632,7 @@
 <footer class="rodape">
   <b style="color:#f3efe9;">PRONIX Radar</b> — ferramenta interna de Pronix · Vendas Online na Prática
   <br>
-  Dados estimados com base em tendências públicas de busca do Mercado Livre (tendencias.mercadolivre.com.br). Não há integração com ferramentas pagas.
+  Dados reais coletados da API oficial do Mercado Livre, com atualização automática. Sem integração com ferramentas pagas.
   <br><br>
   <button id="btnRestaurar">Restaurar dados originais</button>
 </footer>
@@ -772,11 +889,35 @@ function mlDesconectar() { mlStatus = { ok: false, checado: false }; atualizarBt
 async function mlChecarStatus() {
   try {
     const j = await proxy('status');
-    mlStatus = { ok: !!(j && j.configured), checado: true };
+    mlStatus = { ok: !!(j && j.configured), checado: true, ultimoFetchML: j ? j.ultimoFetchML : null };
   } catch (e) { mlStatus = { ok: false, checado: true }; }
   atualizarBtnML();
 }
-function atualizarBtnML() {}
+function atualizarBtnML() {
+  const chip = $('#mlStatusChip');
+  if (!chip) return;
+  const dot = $('#mlStatusDot');
+  const txt = $('#mlStatusText');
+  if (mlConectado()) {
+    chip.classList.remove('no', 'check'); chip.classList.add('ok');
+    txt.textContent = 'ML conectado';
+  } else {
+    chip.classList.remove('ok', 'check'); chip.classList.add('no');
+    txt.textContent = 'ML offline';
+  }
+  const selo = $('#atualSelo');
+  if (selo && mlStatus.ultimoFetchML) {
+    const d = new Date(mlStatus.ultimoFetchML);
+    const agora = new Date();
+    const diffMin = Math.round((agora - d) / 60000);
+    let texto;
+    if (diffMin < 1) texto = 'agora mesmo';
+    else if (diffMin < 60) texto = 'há ' + diffMin + ' min';
+    else { const h = Math.floor(diffMin / 60); const m = diffMin % 60; texto = 'há ' + h + 'h' + (m ? ' ' + m + 'min' : ''); }
+    selo.innerHTML = '<span class="aso-dot"></span> Dados reais do ML: ' + texto;
+    selo.style.display = 'inline-flex';
+  }
+}
 
 /* ---- Busca de dados reais na API ---- */
 function dominioDept(domainId) {
@@ -1768,7 +1909,16 @@ function navegar(view) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('view-' + view).classList.add('active');
   document.querySelectorAll('.nav button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  document.querySelectorAll('.mnav button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleSkeleton(mostrar) {
+  const sk = $('#loadSkeleton');
+  const conteudo = $('#conteudoPainel');
+  if (!sk || !conteudo) return;
+  sk.style.display = mostrar ? 'block' : 'none';
+  conteudo.style.display = mostrar ? 'none' : 'block';
 }
 
 let toastTimer = null;
@@ -1851,6 +2001,7 @@ let timerAuto = null;
 async function atualizarMetricas() {
   const s = semente() + 1;
   sessionStorage.setItem(SS_SALT, String(s));
+  toggleSkeleton(true);
   try {
     toast('Buscando tendências e preços reais no Mercado Livre...');
     const reais = await mlCarregarReais();
@@ -1862,6 +2013,7 @@ async function atualizarMetricas() {
       renderTudo();
       proximaAtualizacao = Date.now() + AUTO_INTERVALO_MS;
       checarAlertas();
+      mlChecarStatus();
       toast(reais.length + ' produtos carregados com dados reais do Mercado Livre.');
       return;
     }
@@ -1876,6 +2028,8 @@ async function atualizarMetricas() {
     } else {
       toast('Falha ao buscar dados reais: ' + msg);
     }
+  } finally {
+    toggleSkeleton(false);
   }
   renderTudo();
   proximaAtualizacao = Date.now() + AUTO_INTERVALO_MS;
@@ -1910,6 +2064,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderTudo();
 
   document.querySelectorAll('.nav button').forEach(b => b.onclick = () => navegar(b.dataset.view));
+  document.querySelectorAll('.mnav button').forEach(b => b.onclick = () => navegar(b.dataset.view));
 
   const THEME_KEY = 'mlp_tema';
   function aplicarTema(escuro) {
