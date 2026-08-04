@@ -402,6 +402,7 @@
   }
 
   /* ===== LAYOUT MOBILE (<= 768px) ===== */
+  .mnav { display: none; }
   @media (max-width: 768px) {
     body { padding-bottom: 74px; }
     .topbar { padding: 10px 14px; gap: 10px; }
@@ -889,8 +890,8 @@ function mlDesconectar() { mlStatus = { ok: false, checado: false }; atualizarBt
 async function mlChecarStatus() {
   try {
     const j = await proxy('status');
-    mlStatus = { ok: !!(j && j.configured), checado: true, ultimoFetchML: j ? j.ultimoFetchML : null };
-  } catch (e) { mlStatus = { ok: false, checado: true }; }
+    mlStatus = { ok: !!(j && j.configured), checado: true, ultimoFetchML: j ? j.ultimoFetchML : null, erro: '' };
+  } catch (e) { mlStatus = { ok: false, checado: true, erro: String(e.message || e) }; }
   atualizarBtnML();
 }
 function atualizarBtnML() {
@@ -901,9 +902,11 @@ function atualizarBtnML() {
   if (mlConectado()) {
     chip.classList.remove('no', 'check'); chip.classList.add('ok');
     txt.textContent = 'ML conectado';
+    chip.title = mlStatus.erro ? 'Dados reais ativos. ' + mlStatus.erro : 'Dados reais do Mercado Livre ativos.';
   } else {
     chip.classList.remove('ok', 'check'); chip.classList.add('no');
     txt.textContent = 'ML offline';
+    chip.title = mlStatus.erro || 'Sem conexão com o servidor do Mercado Livre.';
   }
   const selo = $('#atualSelo');
   if (selo && mlStatus.ultimoFetchML) {
