@@ -8,7 +8,7 @@ Desde esta atualização, o painel passa a exibir **dados reais do Mercado Livre
 
 ### Como funciona
 
-- Uma **Netlify Function** (`ml-bridge`) na URL `https://sunny-paprenjak-43d157.netlify.app/.netlify/functions/ml-bridge` faz o papel de proxy seguro para a API do Mercado Livre.
+- Uma **Netlify Function** (`ml-bridge`) na URL `https://pronix-radar.netlify.app/.netlify/functions/ml-bridge` faz o papel de proxy seguro para a API do Mercado Livre.
 - O **token de acesso** (autorização única feita pelo administrador) é guardado no **Netlify Blobs** e **renova automaticamente** a cada ~6h graças ao escopo `offline_access` — sem intervenção manual.
 - O painel consulta o proxy com uma chave de API própria; os especialistas **não fazem login** no Mercado Livre.
 
@@ -16,9 +16,9 @@ Desde esta atualização, o painel passa a exibir **dados reais do Mercado Livre
 
 | Item | Valor |
 | --- | --- |
-| Painel (Netlify) | `https://sunny-paprenjak-43d157.netlify.app/` |
+| Painel (Netlify) | `https://pronix-radar.netlify.app/` |
 | Redirect do GitHub Pages | `https://lucasramosseo-droid.github.io/pronix-radar/` (redireciona para o painel) |
-| Proxy (Netlify Function) | `https://sunny-paprenjak-43d157.netlify.app/.netlify/functions/ml-bridge` |
+| Proxy (Netlify Function) | `https://pronix-radar.netlify.app/.netlify/functions/ml-bridge` |
 | Aplicação Mercado Livre | PRONIX RADAR (client_id `3926651658690238`), com escopos `read`, `write` e `offline_access` |
 | Armazenamento do token | Netlify Blobs, store `site:mlp-radar`, chave `token` |
 
