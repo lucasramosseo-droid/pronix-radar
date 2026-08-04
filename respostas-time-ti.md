@@ -19,7 +19,7 @@ Não há APIs pagas nem serviços externos de IA. A "inteligência" é um **moto
 - Série histórica de 30 dias gerada por algoritmo determinístico (seed local) calibrado aos totais reais dos dados de base;
 - Simulação de "análise com IA" por produto com as mesmas regras, para fins de apresentação e validação da metodologia.
 
-Todo o dado exibido parte das **tendências públicas do Mercado Livre** (tendencias.mercadolivre.com.br), sem integração com ferramentas pagas.
+**Atualização recente:** o painel passou a consumir **dados reais da API oficial do Mercado Livre** (preço, avaliações e tendências) via uma Netlify Function que atua como proxy seguro. O token de acesso é renovado automaticamente (`offline_access`), os especialistas não precisam de login e os valores exibidos vêm de dados verdadeiros do ML em vez de estimativas locais. Quando o servidor está indisponível, o painel mantém as estimativas locais como fallback.
 
 ## 3. Estimativa de tempo economizado e frequência de uso
 

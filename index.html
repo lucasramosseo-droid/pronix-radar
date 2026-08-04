@@ -391,7 +391,6 @@
     <button data-view="oportunidades">🎯 Oportunidades do dia</button>
   </nav>
   <div style="display:flex;align-items:center;gap:8px;">
-    <button class="ml-btn" id="btnConectarML" title="Autorizar o app no servidor para dados reais do Mercado Livre">🔗 Conectar ML</button>
     <button class="dark-toggle" id="darkToggle" title="Alternar modo escuro">🌙</button>
     <button class="dark-toggle" id="alertaToggle" title="Receber alerta quando um produto subir nas buscas">🔔</button>
   </div>
@@ -776,14 +775,7 @@ async function mlChecarStatus() {
   } catch (e) { mlStatus = { ok: false, checado: true }; }
   atualizarBtnML();
 }
-function atualizarBtnML() {
-  const b = $('#btnConectarML');
-  if (!b) return;
-  const ok = mlConectado();
-  b.textContent = ok ? '🔗 ML conectado' : '🔗 Conectar ML';
-  b.classList.toggle('on', ok);
-  b.title = ok ? 'Dados reais do Mercado Livre ativos via servidor.' : 'Autorizar o app no servidor para carregar dados reais';
-}
+function atualizarBtnML() {}
 
 /* ---- Busca de dados reais na API ---- */
 function dominioDept(domainId) {
@@ -1877,7 +1869,7 @@ async function atualizarMetricas() {
     const msg = String(e.message || e);
     if (/401|403/.test(msg)) {
       mlDesconectar();
-      toast('O servidor não está autorizado no Mercado Livre. Abra a conexão do ML para autorizar uma única vez.');
+      toast('O servidor não está autorizado no Mercado Livre. Entre em contato com o administrador.');
     } else if (/forbidden/.test(msg)) {
       toast('Acesso ao serviço negado. Verifique se o ml-bridge.php está instalado e a chave correta.');
     } else {
@@ -1947,17 +1939,6 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#btnRelCSV').onclick = exportarCSV;
   $('#btnRelPDF').onclick = gerarPDF;
 
-  $('#btnConectarML').onclick = () => {
-    if (mlConectado()) {
-      if (confirm('O Mercado Livre já está autorizado no servidor. Reautorizar?')) {
-        window.open(ML_CONFIG.authUrl, '_blank');
-        mlChecarStatus();
-      }
-      return;
-    }
-    window.open(ML_CONFIG.authUrl, '_blank');
-    mlChecarStatus();
-  };
   mlChecarStatus();
 
   $('#brandLogo').onclick = () => { navegar('painel'); location.reload(); };
