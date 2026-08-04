@@ -21,6 +21,8 @@ Não há APIs pagas nem serviços externos de IA. A "inteligência" é um **moto
 
 **Atualização recente:** o painel passou a consumir **dados reais da API oficial do Mercado Livre** (preço, avaliações e tendências) via uma Netlify Function que atua como proxy seguro. O token de acesso é renovado automaticamente (`offline_access`), os especialistas não precisam de login e os valores exibidos vêm de dados verdadeiros do ML em vez de estimativas locais. Quando o servidor está indisponível, o painel mantém as estimativas locais como fallback.
 
+**Hospedagem:** o painel agora é publicado no **Netlify** em `https://pronix-radar.netlify.app/` (o antigo endereço do GitHub Pages redireciona para lá). Como o painel e o proxy estão no mesmo domínio, a conexão com o ML é estável e sem bloqueios do navegador.
+
 ## 3. Estimativa de tempo economizado e frequência de uso
 
 - **Tempo por execução**: a análise completa dos 36 produtos (buscas, tendência, concorrência, margem, lucro, quantidade sugerida e ranking de oportunidades) sai em **segundos**, com um clique em "Atualizar análise".
@@ -35,7 +37,7 @@ Não há APIs pagas nem serviços externos de IA. A "inteligência" é um **moto
 ## 5. Print de tela ou vídeo curto
 
 - Vídeo curto disponível: gravação de tela (~1 min) seguindo o roteiro de demonstração em `roteiro-demo.md`, mostrando Painel → Oportunidades do dia → catálogo com margem/lucro → relatório PDF/CSV.
-- Como reproduzir: abrir `index.html` em qualquer navegador (Chrome/Edge/Firefox). Funciona offline, sem servidor.
+- Como reproduzir: abrir `https://pronix-radar.netlify.app/` em qualquer navegador (Chrome/Edge/Firefox). O chip verde no cabeçalho indica que o Mercado Livre está conectado com dados reais.
 
 ## 6. Breve explicação de como a IA foi aplicada e qual o ganho gerado
 

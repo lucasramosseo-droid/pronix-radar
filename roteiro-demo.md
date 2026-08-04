@@ -1,7 +1,7 @@
 # Roteiro de Demo — Pronix Radar
 
 Roteiro para apresentar o Pronix Radar ao time de TI. Duração estimada: 3 a 4 minutos.
-Abra `index.html` no navegador (duplo clique funciona) e siga a sequência abaixo.
+Abra `https://pronix-radar.netlify.app/` no navegador e siga a sequência abaixo.
 
 ---
 
@@ -9,7 +9,7 @@ Abra `index.html` no navegador (duplo clique funciona) e siga a sequência abaix
 
 - Mostre os **cards de resumo** no topo: produtos monitorados, buscas por mês, em alta e preço médio.
 - Destaque a **pizza de participação por departamento** e o gráfico de **evolução de buscas dos últimos 30 dias**.
-- Mencione que tudo roda **localmente no navegador**, sem servidor e sem integrações pagas — os dados são estimativas públicas de tendências do Mercado Livre.
+- Aponte o **chip verde "ML conectado"** no cabeçalho: os dados de preço, avaliações e tendências vêm da API oficial do Mercado Livre, via proxy hospedado no Netlify (mesmo domínio do painel).
 
 ## 2. Oportunidades do dia (novo)
 
@@ -34,5 +34,5 @@ Abra `index.html` no navegador (duplo clique funciona) e siga a sequência abaix
 ## 5. Fechamento
 
 - Mostre o **modo escuro** (botão 🌙) e o botão **🔔 Alertas** (aviso quando um produto subir nas buscas).
-- Reforce a honestidade dos dados: "estimativa com base em tendências públicas; sem integração com ferramentas pagas".
+- Reforce a honestidade dos dados: os valores vêm de dados reais do Mercado Livre coletados pela API oficial, com cache e estimativas locais como fallback quando o servidor estiver indisponível.
 - Abra o espaço para perguntas.

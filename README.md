@@ -51,7 +51,7 @@ Os dados reais são atualizados automaticamente, sem intervenção manual:
 
 ## Uso
 
-Abra `index.html` em qualquer navegador (ou o painel publicado). Não requer instalação. Funciona online (para dados reais via proxy) e offline (estimativas locais).
+Abra `https://pronix-radar.netlify.app/` em qualquer navegador. Não requer instalação. Funciona online (para dados reais via proxy) e mantém estimativas locais como fallback offline.
 
 ## Experiência do painel
 
