@@ -21,11 +21,24 @@ Desde esta atualização, o painel passa a exibir **dados reais do Mercado Livre
 | Aplicação Mercado Livre | PRONIX RADAR (client_id `3926651658690238`), com escopos `read`, `write` e `offline_access` |
 | Armazenamento do token | Netlify Blobs, store `site:mlp-radar`, chave `token` |
 
+### Frequência de atualização dos dados
+
+Os dados reais são atualizados automaticamente, sem intervenção manual:
+
+| Tipo de dado | Frequência |
+| --- | --- |
+| Tendências de busca | a cada 1 hora |
+| Produtos / detalhes (preço, estoque) | a cada 6 horas |
+| Avaliações | a cada 24 horas |
+
+- O painel, enquanto aberto, re-consulta o proxy a cada 15 minutos; os valores vêm do cache do servidor.
+- O cache expira sozinho e o proxy busca dados novos do Mercado Livre, dentro do limite da aplicação (18.000 requisições/hora).
+
 ### Segurança
 
 - O `client_secret` do app ML e a chave do painel vivem apenas nas variáveis de ambiente da Netlify Function, nunca no HTML público.
 - O proxy valida a chave de API (`ML_API_KEY`) em toda chamada de dados.
-- As respostas do ML são armazenadas em cache no Blobs (6h a 24h conforme o tipo) para reduzir chamadas.
+- As respostas do ML são armazenadas em cache no Blobs (conforme a tabela de frequência acima) para reduzir chamadas.
 
 ### Ações do proxy
 
