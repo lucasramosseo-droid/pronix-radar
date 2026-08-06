@@ -62,6 +62,17 @@ Abra `https://pronix-radar.netlify.app/` em qualquer navegador. Não requer inst
 
 ## Atualizações recentes
 
+### 06/08/2026 — Aba Departamentos útil e carregamento rápido
+
+- **Aba Departamentos**:
+  - Clicar no card de um departamento agora abre a aba **Produtos já filtrada** por aquele departamento, em vez de só abrir o Mercado Livre externo. O link externo virou um botão separado **"Ver no ML"**.
+  - **Backfill de departamentos**: ao carregar os dados reais, o painel busca automaticamente produtos representativos para os departamentos que ficarem vazios (ex.: air fryer, bicicleta aro 29, óleo de motor), então **nenhum departamento fica com 0 produtos**.
+- **Carregamento mais rápido e sem travamento**:
+  - As buscas de produtos reais agora rodam **em paralelo** (pool de concorrência), reduzindo muito o tempo da primeira carga.
+  - Timeout de segurança em cada chamada ao proxy (25s), para nenhuma requisição travar a página para sempre.
+  - Trava contra atualizações simultâneas: clicar em "Atualizar métricas" duas vezes não duplica a carga.
+  - Mensagem no carregamento avisando que a primeira carga pode levar cerca de um minuto.
+
 ### 06/08/2026 — Sazonalidade automática e correções de layout
 
 - **Sazonalidade automática**: produtos passam a receber automaticamente os selos sazonais (🎄 Natal, 💝 Dia das Mães, 👔 Dia dos Pais, ❄️ Inverno, 🔥 Verão, 🎒 Volta às aulas, ⚽ Copa/eventos) com base em palavras-chave do nome — inclusive os produtos reais vindos da API do Mercado Livre. A classificação pode ser ajustada manualmente no cadastro do produto.
