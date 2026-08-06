@@ -60,6 +60,26 @@ Abra `https://pronix-radar.netlify.app/` em qualquer navegador. Não requer inst
 - **Layout mobile**: em telas até 768px, o painel ganha um layout dedicado com navegação fixa inferior (bottom nav) e cards em coluna, otimizado para uso no celular.
 - **Carregamento**: skeleton animado é exibido enquanto os dados reais são buscados.
 
+## Atualizações recentes
+
+### 06/08/2026 — Sazonalidade automática e correções de layout
+
+- **Sazonalidade automática**: produtos passam a receber automaticamente os selos sazonais (🎄 Natal, 💝 Dia das Mães, 👔 Dia dos Pais, ❄️ Inverno, 🔥 Verão, 🎒 Volta às aulas, ⚽ Copa/eventos) com base em palavras-chave do nome — inclusive os produtos reais vindos da API do Mercado Livre. A classificação pode ser ajustada manualmente no cadastro do produto.
+- **Correção de overflow**:
+  - No gráfico *Evolução de buscas*, títulos longos são abreviados com reticências para nunca colidirem com a data lateral (nome completo aparece no tooltip).
+  - Na legenda do gráfico de pizza, nomes longos truncan e os números não estouram mais o card.
+- **Correção de erro de carregamento**: corrigido um bug (uso de variável antes da inicialização) que travava a renderização do painel e deixava produtos e botões indisponíveis.
+- **Melhorias no relatório PDF**:
+  - Rodapé atualizado para citar os dados reais da API oficial do Mercado Livre.
+  - Novo resumo executivo no topo com os destaques do catálogo.
+  - Selo verde "Dados reais do ML" no cabeçalho.
+  - Gráfico donut de participação por departamento ao lado da tabela.
+  - Paginação em A4 com linhas e títulos sem quebras órfãs.
+- **Painel visual**:
+  - Cards de indicadores (KPIs) com ícone e faixa de cor temática no Painel e em Oportunidades do dia.
+  - Selo de última atualização mais destacado (borda verde + indicador pulsante).
+  - Botão flutuante "voltar ao topo" que aparece após rolar a página.
+
 ## Documentação complementar
 
 - `respostas-time-ti.md` — respostas para a submissão ao time de TI.
