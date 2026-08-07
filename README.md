@@ -63,10 +63,11 @@ Abra `https://pronix-radar.netlify.app/` em qualquer navegador. Não requer inst
 
 ## Atualizações recentes
 
-### 07/08/2026 — Swipe de categorias fluido como Instagram (VERS 15)
+### 07/08/2026 — Swipe de categorias como carrossel (VERS 15)
 
-- **Sem recarga ao arrastar para o lado no celular**: o gesto nativo de "voltar/avançar" do navegador (edge swipe de iOS/Android) recarregava a página ao deslizar o dedo na horizontal. Agora o painel detecta a intenção do gesto e bloqueia esse reload, mantendo o scroll normal.
-- **Transição de slide real**: ao trocar de categoria por swipe, a tela atual sai na direção do dedo e a nova desliza de lado (não é mais um simples fade) — navegação fluida entre Painel, Departamentos, Produtos e Oportunidades.
+- **A página vizinha aparece ao lado durante o arrasto**: ao deslizar o dedo, a próxima categoria já está inteira ao lado, grudada no dedo (estilo Instagram) — não é mais uma transição de "sumiu e apareceu". Solte para trocar, ou volte para desistir.
+- **Sem recarga ao arrastar para o lado no celular**: o gesto nativo de "voltar/avançar" do navegador (edge swipe de iOS/Android) recarregava a página; agora o painel detecta a intenção do gesto e bloqueia esse reload, mantendo o scroll normal.
+- **Troca instantânea**: sem "piscada" de fade ao trocar por swipe (o fade ficou só para a navegação por toque nos botões).
 
 ### 07/08/2026 — Avaliações agregadas e cenários de vendas (VERS 15)
 
