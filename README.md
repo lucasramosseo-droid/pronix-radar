@@ -63,6 +63,11 @@ Abra `https://pronix-radar.netlify.app/` em qualquer navegador. Não requer inst
 
 ## Atualizações recentes
 
+### 07/08/2026 — Swipe de categorias fluido como Instagram (VERS 15)
+
+- **Sem recarga ao arrastar para o lado no celular**: o gesto nativo de "voltar/avançar" do navegador (edge swipe de iOS/Android) recarregava a página ao deslizar o dedo na horizontal. Agora o painel detecta a intenção do gesto e bloqueia esse reload, mantendo o scroll normal.
+- **Transição de slide real**: ao trocar de categoria por swipe, a tela atual sai na direção do dedo e a nova desliza de lado (não é mais um simples fade) — navegação fluida entre Painel, Departamentos, Produtos e Oportunidades.
+
 ### 07/08/2026 — Avaliações agregadas e cenários de vendas (VERS 15)
 
 - **Avaliações somadas de vários vendedores**: a estimativa de vendas agora soma as avaliações de **até 3 anúncios** do catálogo (antes usava só o anúncio nº 1, o que subestimava produtos fortes). A nota média passa a ser a **média ponderada** pela quantidade de avaliações.
