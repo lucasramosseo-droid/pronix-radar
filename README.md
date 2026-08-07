@@ -67,6 +67,7 @@ Abra `https://pronix-radar.netlify.app/` em qualquer navegador. Não requer inst
 
 - **A página vizinha aparece ao lado durante o arrasto**: ao deslizar o dedo, a próxima categoria já está inteira ao lado, grudada no dedo (estilo Instagram) — não é mais uma transição de "sumiu e apareceu". Solte para trocar, ou volte para desistir.
 - **A página entra inteira, sem cortes**: ao arrastar de uma aba curta para uma alta, a página vizinha aparece completa ao lado (não só o cabeçalho e o rodapé) — o recorte acontece só na horizontal.
+- **Sem rodapé vazando por trás**: o rodapé da página fica oculto durante o arrasto, então nada aparece "atrás" das informações enquanto você desliza.
 - **Sem recarga ao arrastar para o lado no celular**: o gesto nativo de "voltar/avançar" do navegador (edge swipe de iOS/Android) recarregava a página; agora o painel detecta a intenção do gesto e bloqueia esse reload, mantendo o scroll normal.
 - **Troca instantânea**: sem "piscada" de fade ao trocar por swipe (o fade ficou só para a navegação por toque nos botões).
 
