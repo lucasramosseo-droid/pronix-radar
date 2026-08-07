@@ -63,6 +63,11 @@ Abra `https://pronix-radar.netlify.app/` em qualquer navegador. Não requer inst
 
 ## Atualizações recentes
 
+### 07/08/2026 — Avaliações agregadas e cenários de vendas (VERS 15)
+
+- **Avaliações somadas de vários vendedores**: a estimativa de vendas agora soma as avaliações de **até 3 anúncios** do catálogo (antes usava só o anúncio nº 1, o que subestimava produtos fortes). A nota média passa a ser a **média ponderada** pela quantidade de avaliações.
+- **Cenários conservador / esperado / otimista**: cada produto com avaliações reais mostra a faixa de vendas/mês e faturamento/mês (taxa de avaliação de 25% / 15% / 8%), em vez de um número pontual — mais honesto para decidir.
+
 ### 07/08/2026 — Métricas reais por avaliações (VERS 14)
 
 - **Vendas estimadas a partir de avaliações reais**: `vendas/dia = avaliações ÷ dias desde a 1ª avaliação ÷ taxa de avaliação (15%)`. Antes eram simuladas; agora têm origem em dados reais da API do ML.
