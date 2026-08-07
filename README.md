@@ -18,6 +18,7 @@ Desde esta atualização, o painel passa a exibir **dados reais do Mercado Livre
 | --- | --- |
 | Painel (Netlify) | `https://pronix-radar.netlify.app/` |
 | Redirect do GitHub Pages | `https://lucasramosseo-droid.github.io/pronix-radar/` (redireciona para o painel) |
+| Código-fonte | `https://github.com/lucasramosseo-droid/pronix-radar-source` (privado) |
 | Proxy (Netlify Function) | `https://pronix-radar.netlify.app/.netlify/functions/ml-bridge` |
 | Aplicação Mercado Livre | PRONIX RADAR (client_id `3926651658690238`), com escopos `read`, `write` e `offline_access` |
 | Armazenamento do token | Netlify Blobs, store `site:mlp-radar`, chave `token` |
@@ -61,6 +62,15 @@ Abra `https://pronix-radar.netlify.app/` em qualquer navegador. Não requer inst
 - **Carregamento**: skeleton animado é exibido enquanto os dados reais são buscados.
 
 ## Atualizações recentes
+
+### 07/08/2026 — Métricas reais por avaliações (VERS 14)
+
+- **Vendas estimadas a partir de avaliações reais**: `vendas/dia = avaliações ÷ dias desde a 1ª avaliação ÷ taxa de avaliação (15%)`. Antes eram simuladas; agora têm origem em dados reais da API do ML.
+- **Idade do produto**: a bridge devolve a data da **primeira avaliação** de cada item, e o painel mostra "1ª avaliação" e "Idade (dias)" no bloco de análise (no lugar da antiga linha genérica de catálogo).
+- **Constantes declaradas**: conversão (5%), comissão ML (16%) e imposto (14,42%) são premissas explícitas, sem valores aleatórios. Sem avaliações suficientes, o painel usa estimativa conservadora por posição no ranking e explica isso no texto.
+- **Correção da classificação de departamentos**: produtos de outros domínios (canecas, sandálias, livros, pneus, etc.) não caem mais em Eletrônicos — classificação por domínio + nome.
+- **Alertas de produto em alta**: base estável por palavra-chave (não mais por item do ML) e persistida em `localStorage`, então alertas continuam valendo entre sessões.
+- **Mobile mais fluido**: bloqueio do refresh nativo ao arrastar no topo (pull-to-refresh) e troca de categorias por swipe sem a "piscada" de rolagem de 1s.
 
 ### 06/08/2026 — Aba Departamentos útil e carregamento rápido
 
